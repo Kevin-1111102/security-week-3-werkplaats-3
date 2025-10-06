@@ -5,6 +5,7 @@ class ResearchDetails {
         this.disabilityData = null;
 
         this.researchId = window.location.pathname.split('/').pop();
+        this.researchTitle = document.querySelector('#research-title');
         this.sections = {
             research: document.querySelector('#research-info'),
             participants: document.querySelector('#participants-info')
@@ -67,7 +68,8 @@ class ResearchDetails {
         if (research.beperkingen && research.beperkingen.length > 0) {
             beperkingenText = research.beperkingen.map(item => item.beperking_naam || 'Onbekend').join(', ');
         }
-
+        
+        this.researchTitle.textContent = research.titel;
         this.sections.research.innerHTML = this.createTabContent({
             "Titel": research.titel,
             "Status": research.status,

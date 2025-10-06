@@ -43,7 +43,7 @@ class SubscriptionModel(Model):
             SELECT oz.titel AS onderzoek,
             oz.beperking_categorie AS onderzoeksbeperkingcategorie,
             g.voornaam || ' ' || COALESCE(g.tussenvoegsel || ' ', '') || g.achternaam AS ervaringsdeskundige,
-            b.beperking_naam AS e_beperking,
+            GROUP_CONCAT(b.beperking_naam, ', ') AS e_beperking,
             go.status AS status,
             oz.onderzoek_id AS onderzoek_id,
             g.gebruiker_id AS gebruiker_id
@@ -57,14 +57,36 @@ class SubscriptionModel(Model):
             
             if search_term:
                 query += """
-                 AND (
+                GROUP BY
+                    oz.titel,
+                    oz.beperking_categorie,
+                    g.voornaam,
+                    g.tussenvoegsel,
+                    g.achternaam,
+                    go.status,
+                    oz.onderzoek_id,
+                    g.gebruiker_id
+                HAVING (
                     LOWER(oz.titel) LIKE LOWER(?)
-                    OR LOWER(oz.beperking) LIKE LOWER(?)
-                    OR LOWER(ervaringsdeskundige) LIKE LOWER(?)
+                    OR LOWER(oz.beperking_categorie) LIKE LOWER(?)
+                    OR LOWER(g.voornaam || ' ' || COALESCE(g.tussenvoegsel || ' ', '') || g.achternaam) LIKE LOWER(?)
+                    OR LOWER(b.beperking_naam) LIKE LOWER(?)
                     OR LOWER(go.status) LIKE LOWER(?)
                 )
                 """
-                args.extend([f"%{search_term}%"] * 4)
+                args.extend([f"%{search_term}%"] * 5)
+            else:
+                query += """
+                GROUP BY
+                    oz.titel,
+                    oz.beperking_categorie,
+                    g.voornaam,
+                    g.tussenvoegsel,
+                    g.achternaam,
+                    go.status,
+                    oz.onderzoek_id,
+                    g.gebruiker_id
+                """
                 
             if sort_by:
                 query += f" ORDER BY {sort_by} {order}"
@@ -119,7 +141,7 @@ class SubscriptionModel(Model):
 
         if role == "admin":
             query = """
-            SELECT COUNT(*) as total
+            SELECT COUNT(DISTINCT go.gebruiker_id || '-' || go.onderzoek_id) as total
             FROM gebruiker_onderzoek AS go
             INNER JOIN onderzoeken AS oz ON oz.onderzoek_id = go.onderzoek_id
             INNER JOIN gebruikers AS g ON g.gebruiker_id = go.gebruiker_id
@@ -132,12 +154,13 @@ class SubscriptionModel(Model):
                 query += """
                 AND (
                     LOWER(oz.titel) LIKE LOWER(?)
-                    OR LOWER(oz.beperking) LIKE LOWER(?)
-                    OR LOWER(ervaringsdeskundige) LIKE LOWER(?)
+                    OR LOWER(oz.beperking_categorie) LIKE LOWER(?)
+                    OR LOWER(g.voornaam || ' ' || COALESCE(g.tussenvoegsel || ' ', '') || g.achternaam) LIKE LOWER(?)
+                    OR LOWER(b.beperking_naam) LIKE LOWER(?)
                     OR LOWER(go.status) LIKE LOWER(?)
                 )
                 """
-                args = [f"%{search_term}%"] * 11
+                args = [f"%{search_term}%"] * 5
 
         if role == "ervaringsdeskundige":
             query = """

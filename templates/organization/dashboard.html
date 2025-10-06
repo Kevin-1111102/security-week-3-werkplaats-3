@@ -5,10 +5,9 @@
 {% endblock %}
 {% block title %}Dashboard{% endblock %}
 {% block body %}
+ {% include "components/navbar.html" %}
   <main>
-     {% include "components/navbar.html" %}
-
-        {{ table(
+    {{ table(
       titles=["Onderzoeken"],
       active_title="Onderzoeken",
       id={
@@ -25,7 +24,7 @@
       },
       delay=30000,
       has_search=True,
-      has_filters=True,
+      has_filters=False,
       has_pagination=True,
       has_create=True,
       headers={
@@ -46,7 +45,7 @@
       links= {
         "Onderzoeken": "onderzoek"
       }
-    ) }}
+    )}}
   </main>
 
   <script src="/static/js/components/table.js"></script>

@@ -111,9 +111,9 @@ h2:focus-visible {
 /* links */
 a.link:not(.btn) {
   display: inline-block;
-  color: var(--primary);
+  color: var(--tertiary);
   text-decoration: none;
-  border-bottom: .1rem solid var(--primary);
+  border-bottom: .1rem solid var(--tertiary);
   transition: all .2s ease;
 
   &:hover {

@@ -127,7 +127,7 @@ class ResearchModel(Model):
                     OR LOWER(onderzoek_type) LIKE LOWER(?)
                 )
                 """
-                args = [f"%{search_term}%"] * 11
+                args = [f"%{search_term}%"] * 3
 
         elif role == "organisatie":
             query = """

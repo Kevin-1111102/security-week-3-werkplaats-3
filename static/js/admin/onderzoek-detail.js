@@ -1,6 +1,7 @@
 class ResearchDetails {
     constructor() {
         this.researchData = null;
+        this.researchTitle = document.querySelector('#research-title');
         this.researchId = new URLSearchParams(window.location.search).get('id');
         this.sections = {
             research: document.querySelector('#research-info'),
@@ -58,6 +59,7 @@ class ResearchDetails {
             beperkingenText = research.beperkingen.map(item => item.beperking_naam || 'Onbekend').join(', ');
         }
 
+        this.researchTitle.textContent = research.titel;
         this.sections.research.innerHTML = this.createTabContent({
             "Titel": research.titel,
             "Status": research.status,

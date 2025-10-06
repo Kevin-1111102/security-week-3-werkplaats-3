@@ -9,7 +9,7 @@
   <section aria-label="Profiel overzicht" class="profile-container container table-section my-4" data-user-id="{{ user_id }}" data-delay="60000">
     <div class="block d-flex flex-column gap-4">
       <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
-        <h2 class="fs-3 fw-bold mb-0">Profiel</h2>
+        <h1 class="fs-3 fw-bold mb-0">Profiel</h1>
         <a href="{{ url_for('user.update_profile') }}" class="btn btn-sm btn-primary fw-bold" aria-label="Wijzig uw profiel gegevens">
           <i class="fa-solid fa-pen-to-square"></i> Bewerken
         </a>
@@ -40,11 +40,13 @@
           </div>
         </main>
       </div>
-      <a href="/gebruiker" class="btn btn-sm btn-primary fw-bold">
-        <i class="fa-solid fa-arrow-left"></i> Terug naar Dashboard
-      </a>
+      <div class="d-flex justify-content-end">
+        <button id="delete-account-btn" class="btn btn-sm btn-danger fw-bold" aria-label="Verwijder uw account">
+          <i class="fa-solid fa-trash"></i> Account Verwijderen
+        </button>
+      </div>
     </div>
   </section>
   <script src="/static/js/components/vertical_tabs.js"></script>
-  <script src="/static/js/user/profile.js"></script>
+  <script src="/static/js/user/profile.js" type="module"></script>
 {% endblock %}

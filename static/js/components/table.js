@@ -53,13 +53,6 @@ class Table {
         this.addPaginationControls();
         this.addRecordsDropdownEvent();
 
-        setInterval(() => {
-            const tbody = document.querySelector('tbody');
-            if (tbody && tbody.innerHTML.trim() === "") {
-                this.renderEmptyTable();
-            }
-        }, 250);
-
         window.addEventListener('table-refresh', () => {
             this.fetchData();
         });
@@ -92,6 +85,9 @@ class Table {
                     this.renderTableRows(data.data);
                     this.updatePagination(data.total_pages, data.current_page);
                 }
+
+                if (!searchTermEncoded && data.data.length === 1) this.page--;
+
             })
             .catch(error => {
                 console.error('Error fetching data:', error);
