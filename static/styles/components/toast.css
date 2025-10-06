@@ -1,0 +1,59 @@
+/* Styling somewhat based on React Toastify https://fkhadra.github.io/react-toastify/introduction/ */
+
+.toast-container {
+  max-width: 450px;
+}
+
+.toast {
+  position: relative;
+  display: flex;
+  border-radius: var(--border-radius-card);
+  box-shadow: var(--bs-box-shadow-lg);
+  align-items: center;
+  animation: toast-fade-in 0.3s forwards;
+  background: var(--foreground);
+  overflow: hidden;
+  transition: .3s all ease;
+}
+
+.toast:not(.show) {
+  display: block;
+  animation: 1s toast-fade-out-down cubic-bezier(.215, .61, .355, 1) forwards;
+}
+
+.progress-bar {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 5px;
+  border-radius: 0 var(--border-radius) var(--border-radius) 0;
+  animation: progress-bar linear forwards;
+}
+
+.toast-text {
+  color: var(--text-primary);
+}
+
+.toast-success {
+  color: var(--primary);
+  .progress-bar {
+      background: var(--primary);
+  }
+}
+
+.toast-info {
+  color: var(--tertiary);
+
+  .progress-bar {
+    background: var(--tertiary);
+  }
+}
+
+.toast-danger {
+  color: var(--bs-danger);
+
+  .progress-bar {
+    background: var(--bs-danger);
+  }
+}

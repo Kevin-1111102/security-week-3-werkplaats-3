@@ -1,0 +1,73 @@
+{% from "components/table.html" import table %}
+{% extends "base.html" %}
+{% block additional_css %}
+<link rel="stylesheet" href="/static/styles/user/dashboard.css">
+<link rel="stylesheet" href="/static/styles/components/table.css">
+{% endblock %}
+{% block title %}Dashboard{% endblock %}
+{% block body %}
+  <main>
+    {% include "components/navbar.html" %}
+
+    {{ table(
+      titles=[
+        "Onderzoeken",
+        "Aanmeldingen"
+      ],
+      active_title="Onderzoeken",
+      id={
+        "Onderzoeken": "onderzoeken",
+        "Aanmeldingen": "aanmeldingen"
+      },
+      placeholder={
+        "Onderzoeken": "onderzoeken",
+        "Aanmeldingen": "aanmeldingen"
+      },
+      endpoint={
+        "Onderzoeken": "researches",
+        "Aanmeldingen": "subscriptions"
+      },
+      params={
+        "Onderzoeken":"",
+        "Aanmeldingen":""
+      },
+      delay=30000,
+      has_search=True,
+      has_filters=True,
+      has_pagination=True,
+      headers={
+        "Onderzoeken": [
+          {'key': 'titel', 'label': 'Titel', 'sortable': True},
+          {'key': 'onderzoek_type', 'label': 'Type', 'sortable': True},
+          {'key': 'beloning', 'label': 'Beloning', 'sortable': False},
+          {'key': 'begindatum', 'label': 'Startdatum', 'sortable': True},
+          {'key': 'einddatum', 'label': 'Einddatum', 'sortable': True},
+        ],
+        "Aanmeldingen": [
+          {'key': 'titel', 'label': 'Titel', 'sortable': True},
+          {'key': 'onderzoek_type', 'label': 'Type', 'sortable': True},
+          {'key': 'begindatum', 'label': 'Startdatum', 'sortable': True},
+          {'key': 'einddatum', 'label': 'Einddatum', 'sortable': True},
+          {'key': 'status', 'label': 'Status', 'sortable': True}
+        ]
+      },
+      actions= {
+        "Onderzoeken": [
+          {'key': 'onderzoek_id', 'label': 'Informatie', 'icon': 'fa-solid fa-circle-info', 'class': 'btn-outline text-nowrap', 'role': 'link'},
+          {'key': 'onderzoek_id', 'label': 'Aanmelden', 'icon': 'fa-solid fa-user-plus', 'class': 'btn-outline text-nowrap', 'role': 'button'}
+        ],
+        "Aanmeldingen": [
+          {'key': 'onderzoek_id', 'label': 'Informatie', 'icon': 'fa-solid fa-circle-info', 'class': 'btn-outline text-nowrap', 'role': 'link'},
+          {'key': 'onderzoek_id', 'label': 'Afmelden', 'icon': 'fa-solid fa-user-times', 'class': 'btn-outline text-nowrap', 'role': 'button'}
+        ]
+      },
+      links= {
+        "Onderzoeken": "onderzoek",
+        "Aanmeldingen": "onderzoek"
+      }
+    ) }}
+  </main>
+
+  <script src="/static/js/components/table.js"></script>
+  <script src="/static/js/user/dashboard.js" type="module"></script>
+{% endblock %}

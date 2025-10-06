@@ -1,0 +1,1193 @@
+swagger: "2.0"
+info:
+  title: "REST API Documentatie WP3"
+  description: >
+    In onze REST API maken we gebruik van JWT voor authenticatie. Alle beschermde routes vereisen een "access_token". Deze wordt gegenereerd bij elke succesvolle inlogpoging.
+  version: "2.0"
+
+tags:
+  - name: "Authentication"
+  - name: "Users"
+  - name: "Organizations"
+  - name: "Researches"
+  - name: "Subscriptions"
+
+paths:
+  /login:
+    post:
+      tags:
+        - "Authentication"
+      summary: "Authenticeert de inlogpoging van een ervaringsdeskundige, organisatie of admin"
+      description: |
+        # Voorbeeld ervaringsdeskundige:
+        **email**: demo@ervaringsdeskundige.nl
+        **password**: demo123
+        **rol**: ervaringsdeskundige
+
+        # Voorbeeld organisatie:
+        **email**: demo@organisatie.nl
+        **password**: demo123
+        **rol**: organisatie
+
+        # Voorbeeld admin:
+        **email**: demo@admin.nl
+        **password**: demo123
+        **rol**: admin
+      parameters:
+        - name: "body"
+          in: "body"
+          description: "E-mail, wachtwoord en rol van de gebruiker"
+          required: true
+          schema:
+            type: "object"
+            required:
+              - email
+              - password
+              - role
+            properties:
+              email:
+                type: "string"
+                example: "demo@ervaringsdeskundige.nl"
+                description: "E-mail van gebruiker."
+              password:
+                type: "string"
+                example: "demo123"
+                description: "Wachtwoord van gebruiker."
+              role:
+                type: "string"
+                enum: ["ervaringsdeskundige", "organisatie", "admin"]
+                example: "ervaringsdeskundige"
+                description: "Rol van de gebruiker ('ervaringsdeskundige', 'organisatie', 'admin')."
+      responses:
+        200:
+          description: "Login succesvol"
+          schema:
+            type: "object"
+            properties:
+              success:
+                type: "boolean"
+                example: true
+              message:
+                type: "string"
+                example: "string"
+              redirect:
+                type: "string"
+                example: "string"
+              access_token:
+                type: "string"
+                example: "string"
+        401:
+          description: "Ongeldige inloggegevens"
+        403:
+          description: "Registratie afgekeurd of nog niet goedgekeurd"
+
+  /logout:
+    get:
+      tags:
+        - "Authentication"
+      summary: "Verwerkt de uitlogpoging van een ervaringsdeskundige, organisatie of admin"
+      description: "Bij het uitloggen sturen we een response terug die de access_token niet langer geldig maakt en een succesvolle uitlogpoging vaststelt."
+      responses:
+        200:
+          description: "Logout succesvol"
+          schema:
+            $ref: "#/definitions/ApiResponseLink"
+        401:
+          description: "Geen JWT gevonden in cookies of headers, uitloggen is niet mogelijk zonder eerst ingelogd te zijn"
+      security:
+        - jwt_auth: []
+        
+  /api/users:
+    get:
+      tags:
+        - "Users"
+      summary: "Geeft een lijst van alle ervaringsdeskundigen"
+      description: "Geeft een lijst van alle ervaringsdeskundigen met betrekking tot de optionele argumenten en rol van degene die de request maakt."
+      parameters:
+        - name: zoekterm
+          in: query
+          type: string
+          required: false
+          description: Pas de weergave van ervaringsdeskundigen aan op basis van deze invoer.
+        - name: sorteer_op
+          in: query
+          type: string
+          required: false
+          description: Sorteer de weergave van ervaringsdeskundigen op basis van deze invoer.
+        - name: volgorde
+          in: query
+          type: string
+          required: false
+          description: Op- of aflopend
+      responses:
+        200:
+          description: "Alle ervaringsdeskundigen opgehaald"
+          schema:
+            type: "object"
+            properties:
+              current_page:
+                type: integer
+                example: 1
+              data:
+                type: "array"
+                items:
+                  $ref: "#/definitions/GetUser"
+              message:
+                type: "string"
+                example: "string"
+              success:
+                type: "boolean"
+                example: true
+              total_pages:
+                type: integer
+                example: 1
+              total_records:
+                type: integer
+                example: 1
+        401:
+          description: "Geen JWT gevonden in cookies of headers, zonder authorisatie geen toegang"
+        403:
+          description: "Geen toegang tot deze informatie"
+      security:
+        - jwt_auth: []
+
+    post:
+      tags:
+        - "Users"
+      summary: "Verwerkt de registratiepoging van een ervaringsdeskundige"
+      description: "Bij een succesvolle registratie worden de gegevens opgeslagen in de database."
+      parameters:
+        - name: "body"
+          in: "body"
+          description: |
+            **Verplichte invoervelden**
+            email, wachtwoord, voornaam, achternaam, geboortedatum, geslacht, postcode, telefoonnummer, introductie, contact_voorkeur, heeft_voogd, voorwaarden_akkoord
+            **Optionele invoervelden**
+            beperkingen, hulpmiddelen, onderzoektype_voorkeur, (*indien van toepassing*, naam_voogd, email_voogd, telefoonnummer_voogd) 
+          required: true
+          schema:
+            $ref: "#/definitions/CreateUser"
+      responses:
+        201:
+          description: "Registratie van de ervaringsdeskundige succesvol opgeslagen"
+          schema:
+            $ref: "#/definitions/ApiResponseLink"
+        500:
+          description: "Registratie mislukt"
+
+  /api/users/{user_id}:
+    get:
+      tags:
+        - "Users"
+      summary: "Geeft alle gegevens van de ervaringsdeskundige met de opgegeven user_id"
+      description: "Haalt de gegevens op van de ervaringsdeskundige aan de hand van de user_id"
+      parameters:
+      - name: "user_id"
+        in: "path"
+        description: "De unieke ID van een ervaringsdeskundige"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "Gebruikergegevens succesvol opgehaald"
+          schema:
+            type: "object"
+            properties:
+              data:
+                type: "object"
+                $ref: "#/definitions/GetUser"
+              message:
+                type: "string"
+                example: "string"
+              success:
+                type: "boolean"
+                example: true
+        401:
+          description: "Geen JWT gevonden in cookies of headers, zonder authorisatie geen toegang"
+        403:
+          description: "Geen toegang tot deze informatie"
+        404:
+          description: "Ervaringsdeskundige niet gevonden"
+      security:
+        - jwt_auth: []
+
+    put:
+      tags:
+        - "Users"
+      summary: "Past gegevens aan van een ervaringsdeskundige met de opgegeven user_id"
+      description: "Past gegevens aan van een ervaringsdeskundige met de opgegeven user_id"
+      parameters:
+      - name: "user_id"
+        in: "path"
+        description: "De unieke ID van een ervaringsdeskundige"
+        required: true
+        type: "string"
+      - name: "body"
+        in: "body"
+        description: |
+          **Verplichte invoervelden**
+          email, wachtwoord, voornaam, achternaam, geboortedatum, geslacht, postcode, telefoonnummer, introductie, contact_voorkeur, heeft_voogd, voorwaarden_akkoord
+          **Optionele invoervelden**
+          beperkingen, hulpmiddelen, onderzoektype_voorkeur, (*indien van toepassing*, naam_voogd, email_voogd, telefoonnummer_voogd) 
+        schema:
+          $ref: "#/definitions/CreateUser"
+        required: true
+      responses:
+        200:
+          description: "Gebruikergegevens succesvol aangepast"
+          schema:
+            $ref: "#/definitions/ApiResponseLink"
+        401:
+          description: "Geen JWT gevonden in cookies of headers, zonder authorisatie geen toegang"
+        403:
+          description: "Niet toegestaan om de gegevens van een andere ervaringsdeskundige aan te passen"
+      security:
+        - jwt_auth: []
+
+    patch:
+      tags:
+        - "Users"
+      summary: "Gebruik om alleen de status van de ervaringsdeskundige met de opgegeven user_id aan te passen"
+      description: "Gebruik om alleen de status van de ervaringsdeskundige met de opgegeven user_id aan te passen"
+      parameters:
+      - name: "user_id"
+        in: "path"
+        description: De unieke ID van een ervaringsdeskundige
+        required: true
+        type: "string"
+      - name: "body"
+        in: "body"
+        description: "Alleen de status van een ervaringsdeskundige"
+        required: true
+        schema:
+          type: "object"
+          required:
+              - status
+          properties:
+            status:
+              type: "string"
+              example: "string"
+              enum: ["Nieuw", "Goedgekeurd", "Afgekeurd"]
+              description: "Status van een ervaringsdeskundige"
+      responses:
+        200:
+          description: "Wijzigingen zijn succesvol opgeslagen"
+          schema:
+            $ref: "#/definitions/ApiResponse"
+        401:
+          description: "Geen JWT gevonden in cookies of headers, zonder authorisatie geen toegang"
+        403:
+          description: "Niet toegestaan om de gegevens van een andere ervaringsdeskundige aan te passen"
+      security:
+        - jwt_auth: []
+
+    delete:
+      tags:
+        - "Users"
+      summary: "Verwijdert alle gegevens van een ervaringsdeskundige met de opgegeven user_id"
+      description: "Verwijdert alle gegevens van een ervaringsdeskundige met de opgegeven user_id"
+      parameters:
+      - name: "user_id"
+        in: "path"
+        description: "De unieke ID van een ervaringsdeskundige"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "Ervaringsdeskundige succesvol verwijderd"
+          schema:
+            $ref: "#/definitions/ApiResponseLink"
+        401:
+          description: "Geen JWT gevonden in cookies of headers, zonder authorisatie geen toegang"
+        403:
+          description: "Niet toegestaan om de gegevens van een andere ervaringsdeskundige te verwijderen"
+      security:
+        - jwt_auth: []
+
+  /api/organizations:
+    get:
+      tags:
+        - "Organizations"
+      summary: "Geeft een lijst van alle organisaties"
+      description: "Geeft een lijst van alle organisaties met betrekking tot de optionele zoekterm en rol van degene die de request maakt."
+      parameters:
+        - name: zoekterm
+          in: query
+          type: string
+          required: false
+          description: Pas de weergave van organisaties aan op basis van deze invoer.
+        - name: sorteer_op
+          in: query
+          type: string
+          required: false
+          description: Sorteer de weergave van organisaties op basis van deze invoer.
+        - name: volgorde
+          in: query
+          type: string
+          required: false
+          description: Op- of aflopend
+      responses:
+        200:
+          description: "Alle organisaties opgehaald"
+          schema:
+            type: "object"
+            properties:
+              current_page:
+                type: integer
+                example: 1
+              data:
+                type: "array"
+                items:
+                  $ref: "#/definitions/GetOrganization"
+              message:
+                type: "string"
+                example: "string"
+              success:
+                type: "boolean"
+                example: true
+              total_pages:
+                type: integer
+                example: 1
+              total_records:
+                type: integer
+                example: 1
+        401:
+          description: "Geen JWT gevonden in cookies of headers, zonder authorisatie geen toegang"
+        403:
+          description: "Geen toegang tot deze informatie"
+            
+      security:
+        - jwt_auth: []
+
+    post:
+      tags:
+        - "Organizations"
+      summary: " Verwerkt de registratiepoging van een organisatie."
+      description: "Bij een succesvolle registratie worden de gegevens opgeslagen in de database."
+      parameters:
+        - name: "body"
+          in: "body"
+          description: |
+            **Invoervelden**
+            name, type, website, description, contact, email, password, number, details
+          required: true
+          schema:
+            $ref: "#/definitions/CreateOrganization"    
+      responses:
+        201:
+          description: "Registratie van de organisatie is succesvol opgeslagen"
+          schema:
+            $ref: "#/definitions/ApiResponseInteger"
+        500:
+          description: "Registratie mislukt"
+
+  /api/organizations/{organization_id}:
+    get:
+      tags:
+        - "Organizations"
+      summary: "Geeft alle gegevens van de organisatie met de opgegeven organization_id"
+      description: "Haalt de gegevens op van de organisatie aan de hand van de organization_id"   
+      parameters:
+      - name: "organization_id"
+        in: "path"
+        description: De unieke ID van de organisatie
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "Organisatiegegevens succesvol opgehaald"
+          schema:
+            type: "object"
+            properties:
+              data:
+                type: "object"
+                example: "#/definitions/GetOrganisation"
+              message:
+                type: "string"
+                example: "string"
+              success:
+                type: "boolean"
+                example: true
+        401:
+          description: "Geen JWT gevonden in cookies of headers, zonder authorisatie geen toegang"
+        403:
+          description: "Geen toegang tot deze informatie"
+        404:
+          description: "Organisatie niet gevonden"
+      security:
+        - jwt_auth: []
+
+    put:
+      tags:
+        - "Organizations"
+      summary: "Past gegevens aan van de organisatie met de opgegeven organization_id"
+      description: "Past gegevens aan van de organisatie met de opgegeven organization_id."
+      parameters:
+      - name: "organization_id"
+        in: "path"
+        description: De unieke ID van de organisatie
+        required: true
+        type: "string"
+      - name: "body"
+        in: "body"
+        description: "Gegevens om aan te passen met de nieuwe waarden"
+        required: true
+        schema:
+          $ref: "#/definitions/CreateOrganization"
+      responses:
+        200:
+          description: "Organisatiegegevens succesvol aangepast"
+          schema:
+            $ref: "#/definitions/ApiResponseInteger"
+        401:
+          description: "Geen JWT gevonden in cookies of headers, zonder authorisatie geen toegang"
+        403:
+          description: "Niet toegestaan om de gegevens van een andere organisatie aan te passen"
+      security:
+        - jwt_auth: []
+
+    patch:
+      tags:
+        - "Organizations"
+      summary: "Gebruik om alleen de status van de organisatie met de opgegeven organization_id aan te passen"
+      description: "Gebruik om alleen de status van de organisatie met de opgegeven organization_id aan te passen"
+      parameters:
+      - name: "organization_id"
+        in: "path"
+        description: De unieke ID van de organisatie
+        required: true
+        type: "string"
+      - name: "body"
+        in: "body"
+        description: "Alleen de status van een organisatie"
+        required: true
+        schema:
+          type: "object"
+          required:
+              - status
+          properties:
+            status:
+              type: "string"
+              example: "string"
+              enum: ["Nieuw", "Goedgekeurd", "Afgekeurd"]
+              description: "Status van een organisatie"
+      responses:
+        200:
+          description: "Status van de organisatie succesvol aangepast"
+          schema:
+            $ref: "#/definitions/ApiResponseInteger"
+        401:
+          description: "Geen JWT gevonden in cookies of headers, zonder authorisatie geen toegang"
+        403:
+          description: "Niet toegestaan om de gegevens van een andere organisatie aan te passen"
+      security:
+        - jwt_auth: []
+
+    delete:
+      tags:
+        - "Organizations"
+      summary: "Verwijdert alle gegevens van de organisatie met de opgegeven organization_id"
+      description: "Verwijdert alle gegevens van de organisatie met de opgegeven organization_id."
+      parameters:
+      - name: "organization_id"
+        in: "path"
+        description: De unieke ID van de organisatie
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "Organisatie succesvol verwijderd"
+          schema:
+            $ref: "#/definitions/ApiResponseInteger"
+        401:
+          description: "Geen JWT gevonden in cookies of headers, zonder authorisatie geen toegang"
+        403:
+          description: "Niet toegestaan om de gegevens van een andere organisatie te verwijderen"
+      security:
+        - jwt_auth: []
+
+  /api/researches:
+    get:
+      tags:
+        - "Researches"
+      summary: "Geeft een lijst van alle onderzoeken"
+      description: "Geeft een lijst van alle onderzoeken met betrekking tot de optionele zoekterm en rol van degene die een request maakt."
+      parameters:
+        - name: zoekterm
+          in: query
+          type: string
+          required: false
+          description: Pas de weergave van organisaties aan op basis van deze invoer.
+        - name: sorteer_op
+          in: query
+          type: string
+          required: false
+          description: Sorteer de weergave van organisaties op basis van deze invoer.
+        - name: volgorde
+          in: query
+          type: string
+          required: false
+          description: Op- of aflopend
+      responses:
+        200:
+          description: "Alle onderzoeken opgehaald"
+          schema:
+            type: "object"
+            properties:
+              current_page:
+                type: integer
+                example: 1
+              data:
+                type: "array"
+                items:
+                  $ref: "#/definitions/GetUser"
+              message:
+                type: "string"
+                example: "string"
+              success:
+                type: "boolean"
+                example: true
+              total_pages:
+                type: integer
+                example: 1
+              total_records:
+                type: integer
+                example: 1
+        401:
+          description: "Geen JWT gevonden in cookies of headers, zonder authorisatie geen toegang"
+        403:
+          description: "Geen toegang tot deze informatie"
+      security:
+        - jwt_auth: []
+
+    post:
+      tags:
+        - "Researches"
+      summary: " Verwerkt de aanmaak van een nieuw onderzoek."
+      description: "Bij een succesvolle aanmaak worden de gegevens opgeslagen in de database."
+      parameters:
+        - name: "body"
+          in: "body"
+          description: |
+            **Invoervelden**
+            title, available, description, start_date, end_date, research_type, location, with_reward, reward, age_group_from, age_group_to, restriction
+          required: true
+          schema:
+            $ref: "#/definitions/CreateResearch"
+      responses:
+        200:
+          description: "Onderzoek aangemaakt"
+          schema:
+            $ref: "#/definitions/ApiResponseInteger"
+        401:
+          description: "Geen JWT gevonden in cookies of headers, zonder authorisatie geen toegang"
+        403:
+          description: "U kunt geen onderzoeken aanmaken"
+        500:
+          description: "Onderzoek aanmaken mislukt"
+      security:
+        - jwt_auth: []
+
+  /api/researches/{research_id}:
+    get:
+      tags:
+        - "Researches"
+      summary: "Geeft alle gegevens van het onderzoek met de opgegeven research_id"
+      description: "Geeft alle gegevens van het onderzoek met de opgegeven research_id."
+      parameters:
+      - name: "research_id"
+        in: "path"
+        description: "De unieke ID van het onderzoek"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "Onderzoeksgegevens succesvol opgehaald"
+          schema:
+            type: "object"
+            properties:
+              data:
+                type: "object"
+                $ref: "#/definitions/GetResearch"
+              message:
+                type: "string"
+                example: "string"
+              success:
+                type: "boolean"
+                example: true
+        401:
+          description: "Geen JWT gevonden in cookies of headers, zonder authorisatie geen toegang"
+        403:
+          description: "Geen toegang tot deze informatie"
+        404:
+          description: "Onderzoek niet gevonden"
+      security:
+        - jwt_auth: []
+
+    patch:
+      tags:
+        - "Researches"
+      summary: "Past gegevens aan van het onderzoek met de opgegeven research_id"
+      description: "Past gegevens aan van het onderzoek met de opgegeven research_id."
+      parameters:
+      - name: "research_id"
+        in: "path"
+        description: De unieke ID van het onderzoek
+        required: true
+        type: "string"
+      - name: "body"
+        in: "body"
+        description: "Gegevens om aan te passen met de nieuwe waarden"
+        required: true
+        schema:
+          type: "object"
+          required:
+            - title
+            - available
+            - description
+            - start_date
+            - end_date
+            - with_reward
+            - reward
+          properties:
+            description:
+              type: "string"
+              example: "string"
+            end_date:
+              type: "string"
+              example: "string"
+              format: date
+            reward:
+              type: "string"
+              example: "string"
+            start_date:
+              type: "string"
+              example: "string"
+              format: date
+            title:
+              type: "string"
+              example: "string"
+            with_reward:
+              type: "integer"
+              example: 0
+              enum: [0, 1]
+      responses:
+        200:
+          description: "Onderzoekgegevens succesvol aangepast"
+          schema:
+            $ref: "#/definitions/ApiResponseInteger"
+        401:
+          description: "Geen JWT gevonden in cookies of headers, zonder authorisatie geen toegang"
+        403:
+          description: "Niet toegestaan om de gegevens van dit onderzoek aan te passen"
+      security:
+        - jwt_auth: []
+
+    delete:
+      tags:
+        - "Researches"
+      summary: "Verwijdert het onderzoek met de opgegeven research_id"
+      description: "Verwijdert het onderzoek met de opgegeven research_id."
+      parameters:
+      - name: "research_id"
+        in: "path"
+        description: "De unieke ID van het onderzoek"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "Onderzoek succesvol verwijderd"
+          schema:
+            $ref: "#/definitions/ApiResponse"
+        401:
+          description: "Geen JWT gevonden in cookies of headers, zonder authorisatie geen toegang"
+        403:
+          description: "Niet toegestaan om dit onderzoek te verwijderen"
+      security:
+        - jwt_auth: []
+
+  /api/subscriptions:
+    get:
+      tags:
+        - "Subscriptions"
+      summary: "Geeft een lijst van alle onderzoekensaanmeldingen"
+      description: "Geeft een lijst van alle onderzoekensaanmeldingen met betrekking tot de optionele zoekterm en rol van degene die een request maakt."
+      parameters:
+        - name: zoekterm
+          in: query
+          type: string
+          required: false
+          description: Pas de weergave van onderzoekensaanmeldingen aan op basis van deze invoer.
+        - name: sorteer_op
+          in: query
+          type: string
+          required: false
+          description: Sorteer de weergave van onderzoekensaanmeldingen op basis van deze invoer.
+        - name: volgorde
+          in: query
+          type: string
+          required: false
+          description: Op- of aflopend
+      responses:
+        200:
+          description: "Alle onderzoekensaanmeldingen opgehaald"
+          schema:
+            type: "object"
+            properties:
+              current_page:
+                type: integer
+                example: 1
+              data:
+                type: "array"
+                items:
+                  $ref: "#/definitions/GetSubscription"
+              message:
+                type: "string"
+                example: "string"
+              success:
+                type: "boolean"
+                example: true
+              total_pages:
+                type: integer
+                example: 1
+              total_records:
+                type: integer
+                example: 1
+        401:
+          description: "Geen JWT gevonden in cookies of headers, zonder authorisatie geen toegang"
+        403:
+          description: "Geen toegang tot deze informatie"
+      security:
+        - jwt_auth: []
+
+    post:
+      tags:
+        - "Subscriptions"
+      summary: "Verwerkt de onderzoeksaanmelding van een gebruiker"
+      description: "Bij een succesvolle onderzoeksaanmelding wordt deze opgeslagen in de database."
+      parameters:
+      - name: "research_id"
+        in: "path"
+        description: "De unieke ID van het onderzoek"
+        required: true
+        type: "string"
+      responses:
+        201:
+          description: "Onderzoeksaanmelding succesvol opgeslagen"
+          schema:
+            $ref: "#/definitions/ApiResponse"
+        401:
+          description: "Geen JWT gevonden in cookies of headers, zonder authorisatie geen toegang"
+        403:
+          description: "U kunt geen onderzoeksaanmelding doen"
+      security:
+        - jwt_auth: []
+
+  /api/subscriptions/{research_id}:
+    delete:
+      tags:
+        - "Subscriptions"
+      summary: "Verwerkt de onderzoeksafmelding van een gebruiker"
+      description: "Verwerkt de onderzoeksafmelding van een gebruiker"
+      parameters:
+      - name: "research_id"
+        in: "path"
+        description: "De unieke ID van het onderzoek"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "Onderzoeksafmelding succesvol verwerkt"
+          schema:
+            $ref: "#/definitions/ApiResponse"
+        401:
+          description: "Geen JWT gevonden in cookies of headers, zonder authorisatie geen toegang"
+        403:
+          description: "Niet toegestaan om deze onderzoeksafmelding te verwijderen"
+      security:
+        - jwt_auth: []
+
+securityDefinitions:
+  jwt_auth:
+    type: apiKey
+    name: Authorization
+    in: header
+    description: |
+      Voer in: Bearer <access_token>
+
+      Voorbeeld: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...`
+
+definitions:
+  ApiResponse:
+    type: "object"
+    properties:
+      success:
+        type: "boolean"
+        example: true
+      message:
+        type: "string"
+        example: "string"
+
+  ApiResponseLink:
+    type: "object"
+    properties:
+      success:
+        type: "boolean"
+        example: true
+      message:
+        type: "string"
+        example: "string"
+      redirect:
+        type: "string"
+        example: "string"
+
+  ApiResponseInteger:
+    type: "object"
+    properties:
+      success:
+        type: "boolean"
+        example: true
+      message:
+        type: "string"
+        example: "string"
+      data:
+        type: "integer"
+        example: 0
+
+  CreateUser:
+    type: "object"
+    properties:
+      achternaam:
+        type: "string"
+        example: "string"
+      beperkingen:
+        type: "array"
+        items:
+          type: integer
+      bijzonderheden_beperkingen:
+        type: "string"
+        example: "string"
+      bijzonderheden_beschikbaarheid:
+        type: "string"
+        example: "string"
+      contact_voorkeur:
+        type: "string"
+        example: "string"
+      email:
+        type: "string"
+        example: "string"
+      email_voogd:
+        type: "string"
+        example: "string"
+      geboortedatum:
+        type: "string"
+        example: "string"
+      geslacht:
+        type: "string"
+        example: "string"
+      heeft_voogd:
+        type: "integer"
+        example: "0"
+      hulpmiddelen:
+        type: "string"
+        example: "string"
+      introductie:
+        type: "string"
+        example: "string"
+      name_voogd:
+        type: "string"
+        example: "string"
+      onderzoektype_voorkeur:
+        type: "string"
+        example: "string"
+      postcode:
+        type: "string"
+        example: "string"
+      telefoonnummer:
+        type: "string"
+        example: "string"
+      telefoonnummer_voogd:
+        type: "string"
+        example: "string"
+      tussenvoegsel:
+        type: "string"
+        example: "string"
+      voornaam:
+        type: "string"
+        example: "string"
+      voorwaarden_akkoord:
+        type: "integer"
+        example: "0"
+      wachtwoord:
+        type: "string"
+        example: "string"
+    xml:
+      name: "CreateUser"
+
+  GetUser:
+    type: "object"
+    properties:
+      achternaam:
+        type: "string"
+        example: "string"
+      beheerder:
+        type: "integer"
+        example: "0"
+      bijzonderheden_beperkingen:
+        type: "string"
+        example: "string"
+      bijzonderheden_beschikbaarheid:
+        type: "string"
+        example: "string"
+      contact_voorkeur:
+        type: "string"
+        example: "string"
+      email:
+        type: "string"
+        example: "string"
+      email_voogd:
+        type: "string"
+        example: "string"
+      geboortedatum:
+        type: "string"
+        example: "string"
+      gebruiker_id:
+        type: "integer"
+        example: "0"
+      geslacht:
+        type: "string"
+        example: "string"
+      heeft_voogd:
+        type: "integer"
+        example: "0"
+      hulpmiddelen:
+        type: "string"
+        example: "string"
+      introductie:
+        type: "string"
+        example: "string"
+      name_voogd:
+        type: "string"
+        example: "string"
+      onderzoektype_voorkeur:
+        type: "string"
+        example: "string"
+      postcode:
+        type: "string"
+        example: "string"
+      status:
+        type: "string"
+        example: "string"
+      telefoonnummer:
+        type: "string"
+        example: "string"
+      telefoonnummer_voogd:
+        type: "string"
+        example: "string"
+      tussenvoegsel:
+        type: "string"
+        example: "string"
+      voornaam:
+        type: "string"
+        example: "string"
+      voorwaarden_akkoord:
+        type: "integer"
+        example: "0"
+      wachtwoord:
+        type: "string"
+        example: "string"
+    xml:
+      name: "GetUser"
+
+  CreateOrganization:
+    type: "object"
+    properties:
+      contact:
+        type: "string"
+        example: "string"
+      description:
+        type: "string"
+        example: "string"
+      details:
+        type: "string"
+        example: "string"
+      email:
+        type: "string"
+        example: "string"
+      name:
+        type: "string"
+        example: "string"
+      number:
+        type: "string"
+        example: "string"
+      password:
+        type: "string"
+        example: "string"
+      type:
+        type: "string"
+        example: "string"
+      website:
+        type: "string"
+        example: "string"
+    xml:
+      name: "CreateOrganization"
+
+  GetOrganization:
+    type: "object"
+    properties:
+      beschrijving:
+        type: "string"
+        example: "string"
+      contactpersoon:
+        type: "string"
+        example: "string"
+      email:
+        type: "string"
+        example: "string"
+      organisatie_id:
+        type: "string"
+        example: "string"
+      organisatie_naam:
+        type: "string"
+        example: "string"
+      organisatie_type:
+        type: "string"
+        example: "string"
+      overige_details:
+        type: "string"
+        example: "string"
+      status:
+        type: "string"
+        example: "string"
+      telefoonnummer:
+        type: "string"
+        example: "string"
+      wachtwoord:
+        type: "string"
+        example: "string"
+      website:
+        type: "string"
+        example: "string"
+    xml:
+      name: "GetOrganization"
+
+  CreateResearch:
+    type: "object"
+    properties:
+      age_min:
+        type: "integer"
+        example: 0
+      age_max:
+        type: "integer"
+        example: 0
+      available:
+        type: "integer"
+        example: 0
+      description:
+        type: string
+        example: "string"
+      end_date:
+        type: string
+        example: "string"
+        format: date
+      location:
+        type: string
+        example: "string"
+      research_type:
+        type: string
+        example: "string"
+      disability-category:
+        type: string
+        example: "string"
+      reward:
+        type: string
+        example: "string"
+      start_date:
+        type: string
+        example: "string"
+        format: date
+      title:
+        type: string
+        example: "string"
+      with_reward:
+        type: "integer"
+        example: 0
+    xml:
+      name: "CreateOrganization"
+
+  GetResearch:
+    type: "object"
+    properties:
+      begindatum:
+        type: "string"
+        example: "string"
+      beloning:
+        type: "string"
+        example: "string"
+      beperking_categorie:
+        type: "string"
+        example: "string"
+      beschikbaar:
+        type: "string"
+        example: "string"
+      beschrijving:
+        type: "string"
+        example: "string"
+      einddatum:
+        type: "string"
+        example: "string"
+      leeftijd_doelgroep_tot:
+        type: "integer"
+        example: 0
+      leeftijd_doelgroep_van:
+        type: "integer"
+        example: 0
+      locatie:
+        type: "string"
+        example: "string"
+      met_beloning:
+        type: "integer"
+        example: 0
+      onderzoek_id:
+        type: "integer"
+        example: 0
+      onderzoek_type:
+        type: "string"
+        example: "string"
+      organisatie_id:
+        type: "integer"
+        example: 0
+      status:
+        type: "string"
+        example: "string"
+      titel:
+        type: "string"
+        example: "string"
+    xml:
+      name: "GetResearch"
+  
+  GetSubscription:
+    type: "object"
+    properties:
+      begindatum:
+        type: "string"
+        example: "string"
+        format: date
+      einddatum:
+        type: "string"
+        example: "string"
+        format: date
+      onderzoek_id:
+        type: "integer"
+        example: 0
+      onderzoek_type:
+        type: "string"
+        example: "string"
+      status:
+        type: "string"
+        example: "string"
+      titel:
+        type: "string"
+        example: "string"
+    xml:
+      name: "GetSubscription"

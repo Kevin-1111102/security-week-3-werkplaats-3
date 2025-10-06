@@ -1,0 +1,189 @@
+{% macro table(
+    titles,
+    active_title,
+    id,
+    placeholder,
+    endpoint,
+    link,
+    params,
+    headers,
+    delay=5000,
+    has_search=True,
+    has_filters=False,
+    has_pagination=False,
+    has_create=False,
+    actions={},
+    links={}
+    ) %}
+    <section
+            aria-label="{{ active_title }}" class="container table-section my-4"
+            data-endpoint="{{ endpoint[active_title]|string }}"
+            data-params="{{ params[active_title]|string }}"
+            data-placeholder="{{ placeholder[active_title]|string }}"
+            data-delay="{{ delay|int }}"
+            data-actions='{{ actions[active_title]|tojson }}'
+            data-link="{{ links[active_title]|string }}"
+            data-all-ids='{{ id|tojson }}'
+            data-all-placeholders='{{ placeholder|tojson }}'
+            data-all-endpoints='{{ endpoint|tojson }}'
+            data-all-params='{{ params|tojson }}'
+            data-all-headers='{{ headers|tojson }}'
+            data-all-actions='{{ actions|tojson }}'
+            data-all-links='{{ links|tojson }}'
+    >
+
+        <div class="block d-flex flex-column gap-2">
+            <div class="d-flex align-items-center gap-3" role="tablist">
+                {% for title in titles %}
+                    {% if title == active_title %}
+                        <h2 class="fs-3 fw-bold title user-select-none active" tabindex="0" role="tab"
+                            aria-selected="true" aria-controls="table-{{ id[active_title] }}">{{ title }}</h2>
+                    {% else %}
+                        <h2 class="fs-3 fw-bold title user-select-none" tabindex="0" role="tab" aria-selected="false"
+                            aria-controls="table-{{ id[active_title] }}">{{ title }}</h2>
+                    {% endif %}
+                {% endfor %}
+            </div>
+
+            <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+                {% if has_search %}
+                    <div class="search-wrapper flex-grow-1">
+                        <i class="fas fa-search search-icon"></i>
+                        <input type="text" id="search-input-{{ id[active_title] }}" class="search-input form-control"
+                               placeholder="Zoek {{ placeholder[active_title] }}..."
+                               aria-label="Zoekbalk {{ placeholder[active_title] }}">
+                    </div>
+                {% endif %}
+
+                <div class="d-flex flex-wrap gap-2">
+                    {% if has_search or has_filters %}
+                        <button class="btn btn-sm btn-outline fw-bold d-none reset-btn"
+                                aria-label="Wis filters en zoekopdracht" title="Wis filters en zoekopdracht">
+                            <i class="fas fa-undo"></i>
+                            Wis Filters
+                        </button>
+                    {% endif %}
+                    {% if has_filters %}
+                        <div class="filters-wrapper">
+                            {% if has_create %}
+                                <a href="{{ url_for('organization.new_research') }}"
+                                   class="btn btn-sm btn-primary fw-bold">
+                                    <i class="fas fa-plus"></i>
+                                    Nieuw
+                                </a>
+                            {% endif %}
+                            <button class="btn btn-sm btn-primary fw-bold"
+                                    data-bs-toggle="dropdown"
+                                    aria-expanded="false"
+                                    aria-haspopup="true"
+                                    aria-controls="filter-form-{{ id[active_title] }}">
+                                <i class="fas fa-filter"></i>
+                                Filters
+                            </button>
+                            <div class="dropdown-menu shadow-lg">
+                                <form id="filter-form-{{ id[active_title] }}" class="filter-form py-3 px-4"
+                                      aria-label="Filterformulier">
+                                    <fieldset class="form-group mb-4">
+                                        <legend class="fw-bold mb-4">Filteren</legend>
+                                        <div class="spinner-border text-primary" role="status">
+                                            <span class="visually-hidden">Bezig met inladen van filters</span>
+                                        </div>
+                                    </fieldset>
+                                    <button class="btn btn-sm btn-primary filter-btn fw-bold w-100"
+                                            aria-label="Pas filters toe" aria-role="button">Filtreer
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="table-wrapper">
+                <table id="{{ id[active_title] }}-table" class="table table-striped table-borderless table-responsive">
+                    <thead>
+                    <tr class="text-uppercase" aria-live="polite">
+                        {% for header in headers[active_title] %}
+                            {% if header.sortable %}
+                                <th scope="col" class="p-3 text-muted text-nowrap sortable" tabindex="0"
+                                    aria-label="Sorteer op {{ header.label }}" aria-sort="none" data-order="none"
+                                    data-column="{{ header.key }}">
+                                    {{ header.label }}
+                                    <i class="fa-solid fa-sort-up ps-2 d-none"></i>
+                                    <i class="fa-solid fa-sort-down ps-2 d-none"></i>
+                                    <i class="fa-solid fa-sort ps-2 d-none"></i>
+                                </th>
+                            {% else %}
+                                <th scope="col" class="p-3 text-muted text-nowrap"
+                                    data-column="{{ header.key }}">{{ header.label }}</th>
+                            {% endif %}
+                        {% endfor %}
+                        {% if actions %}
+                            <th scope="col" class="p-3 text-muted text-nowrap text-end">Acties</th>
+                        {% endif %}
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td class="text-center py-5"
+                            colspan="{{ headers[active_title]|length + actions[active_title]|length }}">
+                            <div class="spinner-border text-primary" role="status" aria-live="polite">
+                                <span class="visually-hidden">Bezig met inladen van {{ placeholder[active_title] }}</span>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center gap-3 flex-wrap">
+                <div class="d-flex align-items-center gap-2 flex-wrap flex-sm-nowrap">
+                    <p class="m-0 d-flex align-items-center gap-1" aria-live="polite" aria-atomic="true">
+                        <span>Pagina</span>
+                        <span class="text-muted" id="current-page">{{ current_page }}</span>
+                        <span>van</span>
+                        <span class="text-muted" id="total-pages">{{ total_pages }}</span>
+                    </p>
+
+                    <div class="d-flex align-items-center gap-1">
+                        <label for="recordsPerPage" class="visually-hidden">Aantal resultaten per pagina</label>
+                        <select id="recordsPerPage" class="records-per-page form-select form-select-sm w-auto"
+                                title="Aantal rijen per pagina"
+                                aria-label="Aantal rijen per pagina">
+                            <option value="5" selected>5</option>
+                            <option value="10">10</option>
+                            <option value="25">25</option>
+                            <option value="50">50</option>
+                        </select>
+                    </div>
+
+                    <div aria-live="polite" aria-atomic="true">
+                        <span class="total-records text-muted"></span>
+                        <span>Resultaten</span>
+                    </div>
+
+                </div>
+
+                {% if has_pagination %}
+                    <div class="pagination d-flex align-items-center flex-nowrap gap-2">
+                        <button class="btn btn-primary btn-icon rounded-circle prev-page"
+                                aria-label="Vorige tabelpagina"
+                                aria-disabled="true"
+                                title="Ga naar de vorige tabelpagina"
+                                disabled>
+                            <i class="fa-solid fa-angle-left"></i>
+                        </button>
+
+                        <div class="pagination-numbers d-none d-sm-block"></div>
+
+                        <button class="btn btn-primary btn-icon rounded-circle next-page"
+                                aria-label="Volgende tabelpagina"
+                                title="Ga naar de volgende tabelpagina">
+                            <i class="fa-solid fa-angle-right"></i>
+                        </button>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </section>
+{% endmacro %}

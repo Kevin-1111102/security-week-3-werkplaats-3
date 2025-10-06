@@ -1,0 +1,58 @@
+meta {
+  name: auth_login
+  type: http
+  seq: 1
+}
+
+post {
+  url: http://127.0.0.1:5000/login
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "email": "demo@organisatie.nl",
+    "password": "demo123",
+    "role": "organisatie"
+  }
+}
+
+tests {
+  test("should return status 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+  
+  test("should return JSON object with correct keys", function() {
+    const data = res.getBody();
+    
+    expect(data).to.be.an('object');
+    expect(data).to.have.all.keys('access_token', 'message', 'redirect', 'success');
+  });
+  
+  test("should have success set to true", function() {
+    const body = res.getBody();
+    
+    expect(body.success).to.be.true;
+  });
+  
+  test("should have message 'Login succesvol'", function() {
+    const data = res.getBody();
+    
+    expect(data.message).to.equal('Login succesvol');
+  });
+  
+  test("should have redirect '/organisatie/'", function() {
+    const data = res.getBody();
+    
+    expect(data.redirect).to.equal('/organisatie/');
+  });
+  
+  test("should return access_token as a JWT", function() {
+    const data = res.getBody();
+    
+    expect(data.access_token).to.be.a('string');
+    expect(data.access_token.split('.')).to.have.lengthOf(3);
+  });
+  
+}

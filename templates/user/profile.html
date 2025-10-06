@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block additional_css %}
+  <link rel="stylesheet" href="/static/styles/user/profile.css">
+  <link rel="stylesheet" href="/static/styles/components/vertical_tabs.css">
+{% endblock %}
+{% block title %}Profiel{% endblock %}
+{% block body %}
+  {% include "components/navbar.html" %}
+  <section aria-label="Profiel overzicht" class="profile-container container table-section my-4" data-user-id="{{ user_id }}" data-delay="60000">
+    <div class="block d-flex flex-column gap-4">
+      <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
+        <h2 class="fs-3 fw-bold mb-0">Profiel</h2>
+        <a href="{{ url_for('user.update_profile') }}" class="btn btn-sm btn-primary fw-bold" aria-label="Wijzig uw profiel gegevens">
+          <i class="fa-solid fa-pen-to-square"></i> Bewerken
+        </a>
+      </div>
+      <div class="tabs-wrapper d-flex flex-wrap gap-4">
+        <aside class="d-flex flex-column flex-grow-1 flex-sm-grow-0 gap-2 me-md-5 mb-4" role="tablist" aria-orientation="vertical">
+          <div id="tab-1" class="tab active" role="tab" aria-selected="true" aria-controls="personal-info" tabindex="0">Persoonlijke Gegevens</div>
+          <div id="tab-2" class="tab" role="tab" aria-selected="false" aria-controls="contact-info" tabindex="0">Contact Gegevens</div>
+          <div id="tab-3" class="tab" role="tab" aria-selected="false" aria-controls="preferences" tabindex="0">Voorkeuren</div>
+          <div id="tab-4" class="tab" role="tab" aria-selected="false" aria-controls="guardian-info" tabindex="0">Voogd Gegevens</div>
+        </aside>
+        <main class="details d-flex flex-grow-1 p-4" aria-live="assertive">
+          <div id="personal-info" class="tab-content active" role="tabpanel" aria-labelledby="tab-1" aria-live="polite">
+            <div class="d-flex align-items-center justify-content-center h-100">
+              <div class="spinner-border text-primary" role="status" aria-live="polite">
+                <span class="visually-hidden">Bezig met inladen van gegevens</span>
+              </div>
+            </div>
+          </div>
+          <div id="contact-info" class="tab-content" role="tabpanel" aria-labelledby="tab-2">
+
+          </div>
+          <div id="preferences" class="tab-content" role="tabpanel" aria-labelledby="tab-3">
+
+          </div>
+          <div id="guardian-info" class="tab-content" role="tabpanel" aria-labelledby="tab-4">
+            
+          </div>
+        </main>
+      </div>
+      <a href="/gebruiker" class="btn btn-sm btn-primary fw-bold">
+        <i class="fa-solid fa-arrow-left"></i> Terug naar Dashboard
+      </a>
+    </div>
+  </section>
+  <script src="/static/js/components/vertical_tabs.js"></script>
+  <script src="/static/js/user/profile.js"></script>
+{% endblock %}

@@ -1,0 +1,54 @@
+@import '../_variables.css';
+
+h1,
+span {
+  color: var(--text-primary) !important;
+}
+
+.form-signin {
+  padding: 1rem;
+}
+
+.form-signin .form-floating:focus-within {
+  z-index: 2;
+}
+
+.form-signin input[type="email"] {
+  margin-bottom: -0.0625em;
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.form-signin input[type="password"] {
+  margin-bottom: 0.625em;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+
+.max-w-sm-md {
+  max-width: 28rem;
+}
+
+.error-message,
+.error-message p,
+.error-message ul li a {
+  color: var(--text-primary) !important;
+}
+
+.error-message li {
+  display: inline;
+}
+
+.error-message li::after {
+  content: ", ";
+}
+
+.error-message li:last-child::after {
+  content: "";
+}
+
+@media (min-width: 768px) {
+  .max-w-sm-md {
+    max-width: 52rem;
+  }
+}

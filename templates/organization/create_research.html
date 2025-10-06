@@ -1,0 +1,159 @@
+{% extends "base.html" %}
+{% block additional_css %}
+    <link rel="stylesheet" href="/static/styles/auth/register.css">
+{% endblock %}
+{% block title %}Nieuw Onderzoek{% endblock %}
+{% block body %}
+    {% include "components/navbar.html" %}
+
+    <section aria-label="Nieuw onderzoek" class="research-container container table-section my-4 col-md-8 col-lg-6"
+             data-delay="60000">
+        <form id="research-form" class="needs-validation">
+            <div class="block d-flex flex-column gap-2">
+                <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mx-4 mt-2">
+                    <h2 class="fs-3 fw-bold mb-0">Nieuw onderzoek</h2>
+                    <div>
+                        <a href="{{ url_for('organization.dashboard') }}" class="btn btn-sm btn-outline fw-bold"
+                           aria-label="Annuleer het onderzoek">
+                            <i class="fa-solid fa-xmark"></i> Annuleren
+                        </a>
+                        <button class="btn btn-sm btn-primary fw-bold" aria-label="Sla het onderzoek op"
+                                type="submit" id="submitBtn">
+                            <i class="fa-solid fa-floppy-disk"></i> Opslaan
+                        </button>
+                    </div>
+                </div>
+
+                <div class="details p-4">
+                    <h4 class="mb-3">Onderzoeksgegevens</h4>
+                    <fieldset class="w-100">
+                        <legend class="visually-hidden">Onderzoeksgegevens</legend>
+                        <div class="d-flex flex-column gap-3 w-100">
+
+                            <div class="d-flex flex-wrap gap-2">
+                                <div class="flex-grow-1 col-sm-2">
+                                    <label for="title" class="form-label">Titel <span
+                                            class="label-star-required">*</span></label>
+                                    <input id="title" type="text" name="title" class="form-control" required>
+                                </div>
+                                <div class="flex-grow-1 col-sm-2">
+                                    <label for="status" class="form-label">Status <span
+                                            class="label-star-required">*</span></label>
+                                    <select id="status" name="status" class="form-control" required>
+                                        <option value="nieuw">Nieuw</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="form-label">Beschikbaar <span class="label-star-required">*</span></label>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="available" id="available_yes"
+                                           value="1" required>
+                                    <label class="form-check-label" for="available_yes">Ja</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="available" id="available_no"
+                                           value="0" required>
+                                    <label class="form-check-label" for="available_no">Nee</label>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label for="description" class="form-label">Beschrijving</label>
+                                <textarea id="description" name="description" class="form-control" rows="2"></textarea>
+                            </div>
+
+                            <div class="d-flex flex-wrap gap-2">
+                                <div class="flex-grow-1 col-sm-2">
+                                    <label for="start-date" class="form-label">Begindatum <span
+                                            class="label-star-required">*</span></label>
+                                    <input id="start-date" type="date" name="start_date" class="form-control" required>
+                                </div>
+                                <div class="flex-grow-1 col-sm-2">
+                                    <label for="end-date" class="form-label">Einddatum <span
+                                            class="label-star-required">*</span></label>
+                                    <input id="end-date" type="date" name="end_date" class="form-control" required>
+                                </div>
+                            </div>
+                        </div>
+                    </fieldset>
+
+                    <fieldset class="w-100">
+                        <h4 class="mt-5 mb-3">Onderzoek Details</h4>
+                        <legend class="visually-hidden">Onderzoek Details</legend>
+                        <div class="d-flex flex-column gap-3 w-100">
+
+                            <div>
+                                <label for="research-type" class="form-label">Onderzoekstype</label>
+                                <select id="research-type" name="research_type" class="form-control">
+                                    <option value="">Selecteer een optie...</option>
+                                    <option value="Online">Online</option>
+                                    <option value="Fysiek">Fysiek</option>
+                                    <option value="Telefonisch">Telefonisch</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label for="location" class="form-label">Locatie</label>
+                                <input id="location" type="text" name="location" class="form-control">
+                            </div>
+
+                            <div>
+                                <label class="form-label">Met beloning <span
+                                        class="label-star-required">*</span></label>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="rewarded" id="rewarded_yes"
+                                           value="1" required>
+                                    <label class="form-check-label" for="rewarded_yes">Ja</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="rewarded" id="rewarded_no"
+                                           value="0" required>
+                                    <label class="form-check-label" for="rewarded_no">Nee</label>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label for="reward" class="form-label">Beloning</label>
+                                <input id="reward" type="text" name="reward" class="form-control">
+                            </div>
+                        </div>
+                    </fieldset>
+
+                    <fieldset class="w-100">
+                        <h4 class="mt-5 mb-3">Doelgroep</h4>
+                        <legend class="visually-hidden">Doelgroep</legend>
+                        <div class="d-flex flex-column gap-3 w-100">
+
+                            <div class="d-flex flex-wrap gap-2">
+                                <div class="flex-grow-1 col-sm-2">
+                                    <label for="age-min" class="form-label">Leeftijd doelgroep van <span
+                                            class="label-star-required">*</span></label>
+                                    <input id="age-min" type="number" name="age_min" class="form-control" required>
+                                </div>
+                                <div class="flex-grow-1 col-sm-2">
+                                    <label for="age-max" class="form-label">Leeftijd doelgroep tot <span
+                                            class="label-star-required">*</span></label>
+                                    <input id="age-max" type="number" name="age_max" class="form-control" required>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="disability-category" class="form-label">Beperkingscategorie</label>
+                                <select id="disability-category" name="disability-category" class="form-control">
+                                    <option value="" disabled selected>Selecteer een beperkingscategorie</option>
+                                </select>
+                            </div>
+
+
+                        </div>
+                    </fieldset>
+
+                </div>
+            </div>
+        </form>
+    </section>
+
+    <script src="/static/js/organization/create_research.js" type="module"></script>
+{% endblock %}

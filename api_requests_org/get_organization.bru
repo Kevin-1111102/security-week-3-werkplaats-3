@@ -1,0 +1,59 @@
+meta {
+  name: get_organization
+  type: http
+  seq: 2
+}
+
+get {
+  url: http://127.0.0.1:5000/api/organizations/:organization_id
+  body: none
+  auth: none
+}
+
+params:path {
+  organization_id: 1
+}
+
+tests {
+  test("should return status 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+  
+  test("should return JSON object with correct keys", function() {
+    const body = res.getBody();
+    
+    expect(body).to.be.an('object');
+    expect(body).to.have.all.keys('data', 'message', 'success');
+  });
+  
+  test("should have success set to true", function() {
+    const body = res.getBody();
+    
+    expect(body.success).to.be.true;
+  });
+  
+  test("should have message 'Organisatie gevonden'", function() {
+    const body = res.getBody();
+    
+    expect(body.message).to.equal("Organisatie gevonden");
+  });
+  
+  test("should return data as an object with correct keys", function() {
+    const body = res.getBody();
+    
+    expect(body.data).to.be.an('object');
+    
+    expect(body.data).to.have.property('beschrijving');
+    expect(body.data).to.have.property('contactpersoon');
+    expect(body.data).to.have.property('email');
+    expect(body.data).to.have.property('organisatie_id');
+    expect(body.data).to.have.property('organisatie_naam');
+    expect(body.data).to.have.property('organisatie_type');
+    expect(body.data).to.have.property('overige_details');
+    expect(body.data).to.have.property('status');
+    expect(body.data).to.have.property('telefoonnummer');
+    expect(body.data).to.have.property('wachtwoord');
+    expect(body.data).to.have.property('website');
+  });
+  
+}

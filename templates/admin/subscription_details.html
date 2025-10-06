@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block additional_css %}
+  <link rel="stylesheet" href="/static/styles/components/vertical_tabs.css">
+{% endblock %}
+
+{% block title %}Aanmelding{% endblock %}
+
+{% block body %}
+  {% include "components/navbar.html" %}
+  <section aria-label="Aanmelding overzicht" class="subscription-container container table-section my-4" data-research-id="{{ research_id }}" data-user-id="{{ user_id }}" data-delay="60000">
+      <div class="block d-flex flex-column gap-4">
+        <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
+          <h2 class="fs-3 fw-bold mb-0">Aanmelding</h2>
+        </div>
+        <div class="tabs-wrapper d-flex flex-wrap gap-4">
+          <aside class="d-flex flex-column flex-grow-1 flex-sm-grow-0 gap-2 me-md-5 mb-4" role="tablist" aria-orientation="vertical">
+            <div id="tab-1" class="tab active" role="tab" aria-selected="true" aria-controls="research-info" tabindex="0">Onderzoek Gegevens</div>
+            <div id="tab-2" class="tab" role="tab" aria-selected="false" aria-controls="contact-info" tabindex="0">Gebruiker Gegevens</div>
+          </aside>
+          <main class="details d-flex flex-grow-1 p-4" aria-live="assertive">
+            <div id="research-info" class="tab-content active" role="tabpanel" aria-labelledby="tab-1" aria-live="polite">
+              <div class="d-flex align-items-center justify-content-center h-100">
+                <div class="spinner-border text-primary" role="status" aria-live="polite">
+                  <span class="visually-hidden">Bezig met inladen van onderzoekgegevens</span>
+                </div>
+              </div>
+            </div>
+            <div id="user-info" class="tab-content" role="tabpanel" aria-labelledby="tab-2">
+
+            </div>
+          </main>
+        </div>
+        <a href="/admin" class="btn btn-sm btn-primary fw-bold">
+          <i class="fa-solid fa-arrow-left"></i> Terug naar Dashboard
+        </a>
+      </div>
+  </section>
+  <script src="/static/js/components/vertical_tabs.js"></script>
+  <script src="/static/js/admin/subscription_details.js"></script>
+{% endblock %}

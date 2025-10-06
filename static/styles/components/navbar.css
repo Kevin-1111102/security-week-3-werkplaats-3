@@ -1,0 +1,24 @@
+.navbar {
+  --bs-navbar-padding-y: 0;
+  background-color: var(--foreground);
+}
+
+.offcanvas {
+  border: 0 !important;
+}
+
+.nav-link:hover {
+  color: var(--tertiary) !important;
+}
+
+.nav-link.active {
+  color: var(--tertiary) !important;
+  font-weight: bold;
+}
+body[data-bs-theme="dark"] .navbar--logo-inverted {
+  display: none !important;
+}
+
+body:not([data-bs-theme="dark"]) .navbar--logo {
+  display: none !important;
+}

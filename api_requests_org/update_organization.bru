@@ -1,0 +1,55 @@
+meta {
+  name: update_organization
+  type: http
+  seq: 3
+}
+
+put {
+  url: http://127.0.0.1:5000/api/organizations/:organization_id
+  body: json
+  auth: none
+}
+
+params:path {
+  organization_id: 1
+}
+
+body:json {
+  {
+    "contact": "David Elmo Miguel Orpheus",
+    "description": "Aangepaste beschrijving",
+    "details": "Aangepaste overige details",
+    "email": "demo@organisatie.nl",
+    "name": "Demo Organisatie v2",
+    "number": "(010)-7492893",
+    "password": "demo123",
+    "type": "Commercieel",
+    "website": "https://demo-organisatie-v2.nl/"
+  }
+}
+
+tests {
+  test("should return status 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+  
+  test("should return JSON object with correct keys", function() {
+    const body = res.getBody();
+  
+    expect(body).to.be.an('object');
+    expect(body).to.have.all.keys('message', 'success');
+  });
+  
+  test("should have success set to true", function() {
+    const body = res.getBody();
+  
+    expect(body.success).to.be.true;
+  });
+  
+  test("should have message 'Wijzigingen voor uw organisatie zijn opgeslagen'", function() {
+    const body = res.getBody();
+  
+    expect(body.message).to.equal("Wijzigingen voor uw organisatie zijn opgeslagen");
+  });
+  
+}

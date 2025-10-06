@@ -1,0 +1,41 @@
+@keyframes toast-fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  
+@keyframes toast-fade-out-up {
+    from {
+        transform: translateY(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateY(-125px);
+        display: none;
+        opacity: 0;
+    }
+}
+
+@keyframes toast-fade-out-down {
+    from {
+        transform: translateY(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateY(125px);
+        display: none;
+        opacity: 0;
+    }
+}
+
+@keyframes progress-bar {
+    from {
+        width: 100%;
+    }
+    to {
+        width: 0;
+    }
+}

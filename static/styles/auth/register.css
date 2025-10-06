@@ -1,0 +1,29 @@
+.logo-sm {
+  height: 48px;
+}
+
+.logo-wd {
+  height: 40px;
+}
+
+body[data-bs-theme="dark"] .navbar--logo-inverted {
+  display: none !important;
+}
+
+body:not([data-bs-theme="dark"]) .navbar--logo {
+  display: none !important;
+}
+
+.register-form {
+  max-width: 400px;
+  margin-bottom: 40px;
+}
+
+.form-label, legend {
+  margin-top: 12px;
+}
+
+legend {
+  font-size: inherit !important;
+  font-weight: inherit !important;
+}

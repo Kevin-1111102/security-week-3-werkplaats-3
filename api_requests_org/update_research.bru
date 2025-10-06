@@ -1,0 +1,53 @@
+meta {
+  name: update_research
+  type: http
+  seq: 7
+}
+
+patch {
+  url: http://127.0.0.1:5000/api/researches/:research_id
+  body: json
+  auth: none
+}
+
+params:path {
+  research_id: 1
+}
+
+body:json {
+  {
+    "description": "Who are you talking to right now? Who is it you think you see? Do you know how much I make a year? I mean, even if I told you, you wouldn't believe it. Do you know what would happen if I suddenly decided to stop going into work?",
+    "end_date": "2025-07-21",
+    "reward": "100 Euro", 
+    "start_date": "2025-04-15",
+    "status": "Gesloten",
+    "title": "The One Who Knocks",
+    "with_reward": 1
+  }
+}
+
+tests {
+  test("should return status 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+  
+  test("should return JSON object with correct keys", function() {
+    const body = res.getBody();
+  
+    expect(body).to.be.an('object');
+    expect(body).to.have.all.keys('message', 'success');
+  });
+  
+  test("should have success set to true", function() {
+    const body = res.getBody();
+  
+    expect(body.success).to.be.true;
+  });
+  
+  test("should have message 'Wijzigingen voor dit onderzoek zijn opgeslagen'", function() {
+    const body = res.getBody();
+  
+    expect(body.message).to.equal("Wijzigingen voor dit onderzoek zijn opgeslagen");
+  });
+  
+}

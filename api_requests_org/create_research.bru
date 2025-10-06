@@ -1,0 +1,59 @@
+meta {
+  name: create_research
+  type: http
+  seq: 6
+}
+
+post {
+  url: http://127.0.0.1:5000/api/researches
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "age_min": 18,
+    "age_max": 67,
+    "description": "What the darn-diddily-doodily did you just say about me, you little witcharooney? I’ll have you know I graduated top of my class at Springfield Bible College, and I’ve been involved in numerous secret mission trips in Capital City, and I have over 300 confirmed baptisms. I am trained in the Old Testament and I’m the top converter in the entire church mission group. You are nothing to me but just another heathen.",
+    "end_date": "2025-07-21",
+    "location": "Springfield",
+    "research_type": "Online",
+    "disability-category": "Motorische / lichamelijke beperkingen",
+    "reward": "50 Euro",
+    "start_date": "2025-04-15",
+    "title": "Best Simpsons Character",
+    "with_reward": 1
+  }
+}
+
+tests {
+  test("should return status 201", function() {
+    expect(res.getStatus()).to.equal(201);
+  });
+  
+  test("should return JSON object with correct keys", function() {
+    const body = res.getBody();
+    
+    expect(body).to.be.an('object');
+    expect(body).to.have.all.keys('data', 'message', 'success');
+  });
+  
+  test("should have success set to true", function() {
+    const body = res.getBody();
+    
+    expect(body.success).to.be.true;
+  });
+  
+  test("should have message 'Onderzoek aangemaakt'", function() {
+    const body = res.getBody();
+    
+    expect(body.message).to.equal("Onderzoek aangemaakt");
+  });
+  
+  test("should return data as an Integer", function() {
+    const body = res.getBody();
+    
+    expect(body.data).to.be.a('number');
+  });
+  
+}

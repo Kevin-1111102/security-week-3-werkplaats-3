@@ -1,0 +1,224 @@
+{% extends "components/auth_layout.html" %}
+{% block additional_css %}
+<link rel="stylesheet" href="/static/styles/auth/register.css">
+{% endblock %}
+
+<!--TODO:
+Error messages underneath inputs
+-->
+
+{% block title %}Registreren{% endblock %}
+
+{% block form %}
+<form id="register-form" class="register-form d-flex flex-column w-100 gap-3 needs-validation" novalidate>
+  <div class="text-center">
+    <h1 class="fs-4 fw-bold" id="register-title">Registreren</h1>
+  </div>
+
+  <fieldset class="tab">
+    <legend class="visually-hidden">Persoonlijke Gegevens</legend>
+
+    <div>
+      <label for="email" class="form-label">E-mail <span class="label-star-required">*</span></label>
+      <input id="email" type="email" name="email" class="form-control" autocomplete="email" required aria-required="true">
+      <div class="invalid-feedback">
+        Vul een geldig e-mailadres in
+      </div>
+    </div>
+
+    <div>
+      <label for="password" class="form-label">Wachtwoord <span class="label-star-required">*</span></label>
+      <input id="password" type="password" name="wachtwoord" class="form-control" required aria-required="true">
+      <div class="invalid-feedback">
+        Vul een wachtwoord in
+      </div>
+    </div>
+
+    <div class="d-flex flex-wrap gap-2">
+      <div class="flex-grow-1 col-sm-2">
+        <label for="first-name" class="form-label">Voornaam <span class="label-star-required">*</span></label>
+        <input id="first-name" type="text" name="voornaam" class="form-control" autocomplete="given-name" required aria-required="true">
+        <div class="invalid-feedback">
+          Vul je voornaam in
+        </div>
+      </div>
+      <div class="flex-grow-1 col-sm-1">
+        <label for="middle-name" class="form-label">Tussenvoegsel</label>
+        <input id="middle-name" type="text" name="tussenvoegsel" class="form-control" autocomplete="additional-name">
+      </div>
+      <div class="flex-grow-1 col-sm-2">
+        <label for="last-name" class="form-label">Achternaam <span class="label-star-required">*</span></label>
+        <input id="last-name" type="text" name="achternaam" class="form-control" autocomplete="family-name" required aria-required="true">
+        <div class="invalid-feedback">
+          Vul je achternaam in
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <label for="birthdate" class="form-label">Geboortedatum <span class="label-star-required">*</span></label>
+      <input id="birthdate" type="date" name="geboortedatum" class="form-control" autocomplete="bday" required aria-required="true">
+      <div class="invalid-feedback">
+        Vul een geboortedatum in
+      </div>
+    </div>
+
+    <fieldset aria-required="true">
+      <legend class="form-label">Geslacht <span class="label-star-required">*</span></legend>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="radio" name="geslacht" id="male" value="Man" required checked>
+        <label class="form-check-label" for="male">Man</label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="radio" name="geslacht" id="female" value="Vrouw" required>
+        <label class="form-check-label" for="female">Vrouw</label>
+      </div>
+    </fieldset>
+  </fieldset>
+
+  <fieldset class="tab">
+    <legend class="visually-hidden">Aanvullende Gegevens</legend>
+
+    <div>
+      <label for="postalcode" class="form-label">Postcode <span class="label-star-required">*</span></label>
+      <input id="postalcode" type="text" class="form-control" name="postcode" autocomplete="postal-code" required aria-required="true">
+      <div class="invalid-feedback">
+        Vul uw postcode in
+      </div>
+    </div>
+
+    <div>
+      <label for="tel" class="form-label">Telefoonnummer <span class="label-star-required">*</span></label>
+      <input id="tel" type="tel" name="telefoonnummer" class="form-control" autocomplete="tel" required aria-required="true">
+      <div class="invalid-feedback">
+        Vul uw telefoonnummer in
+      </div>
+    </div>
+
+    <div>
+      <label for="introduction" class="form-label">Kort voorstellen</label>
+      <textarea id="introduction" name="introductie" class="form-control"></textarea>
+    </div>
+
+    <div>
+      <label for="tools" class="form-label">Gebruikte hulpmiddelen</label>
+      <input id="tools" type="text" name="hulpmiddelen" class="form-control">
+    </div>
+
+    <div>
+      <label for="disabilities" class="form-label">Beperkingen</label>
+      <select id="disabilities" name="beperkingen" class="form-control" multiple size="5">
+        {% for beperking in beperkingen %}
+          <option value="{{ beperking.beperking_id }}">{{ beperking.beperking_naam }}</option>
+        {% endfor %}
+      </select>
+    </div>
+  </fieldset>
+
+  <fieldset class="tab">
+    <legend class="visually-hidden">Voorkeuren</legend>
+
+    <fieldset aria-required="true">
+      <legend class="form-label">Voorkeur benadering <span class="label-star-required">*</span></legend>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="radio" name="contact_voorkeur" id="contact_preference_email" value="E-mail" required checked>
+        <label class="form-check-label" for="contact_preference_email">E-mail</label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="radio" name="contact_voorkeur" id="contact_preference_tel" value="Telefonisch" required>
+        <label class="form-check-label" for="contact_preference_tel">Telefonisch</label>
+      </div>
+    </fieldset>
+
+    <fieldset aria-required="true">
+      <legend class="form-label">
+        Voorkeur onderzoekstype(s) <span class="label-star-required" aria-hidden="true">*</span>
+      </legend>
+
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" name="onderzoektype_voorkeur" id="research_preference_telefonisch"
+               value="Telefonisch" checked>
+        <label class="form-check-label" for="research_preference_telefonisch">Telefonisch</label>
+      </div>
+
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" name="onderzoektype_voorkeur" id="research_preference_online"
+               value="Online" checked>
+        <label class="form-check-label" for="research_preference_online">Online</label>
+      </div>
+
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" name="onderzoektype_voorkeur" id="research_preference_fysiek"
+               value="Fysiek" checked>
+        <label class="form-check-label" for="research_preference_fysiek">Fysiek</label>
+      </div>
+    </fieldset>
+
+    <div class="form-check form-switch mt-4">
+      <input class="form-check-input" type="checkbox" id="has_guardian" name="heeft_voogd">
+      <label class="form-check-label" for="has_guardian">Heeft voogd</label>
+    </div>
+    <input type="hidden" name="heeft_voogd" id="heeft_voogd_hidden" value="">
+    <fieldset id="guardian" class="guardian-section">
+      <legend class="form-label">
+        <b>Gegevens voogd</b>
+      </legend>
+    
+      <div>
+        <label for="guardian_name" class="form-label">
+          Naam <span class="label-star-required" aria-hidden="true">*</span>
+        </label>
+        <input id="guardian_name" type="text" name="naam_voogd" class="form-control">
+        <div class="invalid-feedback">
+          Vul de naam van uw voogd in
+        </div>
+      </div>
+    
+      <div>
+        <label for="guardian_email" class="form-label">
+          E-mail <span class="label-star-required" aria-hidden="true">*</span>
+        </label>
+        <input id="guardian_email" type="email" name="email_voogd" class="form-control">
+        <div class="invalid-feedback">
+          Vul de e-mail van uw voogd in
+        </div>
+      </div>
+    
+      <div>
+        <label for="guardian_tel" class="form-label">
+          Telefoonnummer <span class="label-star-required" aria-hidden="true">*</span>
+        </label>
+        <input id="guardian_tel" type="tel" name="telefoonnummer_voogd" class="form-control">
+        <div class="invalid-feedback">
+          Vul het telefoonnummer van uw voogd in
+        </div>
+      </div>
+    </fieldset>
+
+    <div class="mt-4">
+      <input type="checkbox" name="voorwaarden_akkoord" id="accept_tos" class="form-check-input" required>
+      <label for="accept_tos">
+        Ik ga akkoord met de
+        <a href="{{ url_for('authorization.terms_and_conditions') }}" class="link text-decoration-none" target="_blank" rel="noopener noreferrer">
+          accountvoorwaarden
+        </a>
+      </label>
+      <div class="invalid-feedback">
+        U moet akkoord gaan met de voorwaarden om te registreren
+      </div>
+    </div>
+  </fieldset>
+
+  <div class="d-flex gap-2">
+    <button type="button" class="btn btn-lg btn-outline" id="prevBtn" onclick="switchTab(-1)" tabindex="0">Terug</button>
+    <button type="button" class="btn btn-lg btn-primary w-100" id="nextBtn" onclick="switchTab(1)" tabindex="0">Verder</button>
+  </div>
+
+  <div class="text-center text-sm">
+    Heeft u al een account? <a href="{{ url_for('authorization.login') }}" class="link text-decoration-none">Login</a>
+  </div>
+</form>
+
+<script src="/static/js/auth/register.js" type="module"></script>
+<script src="/static/js/util/form_steps.js"></script>
+{% endblock %}

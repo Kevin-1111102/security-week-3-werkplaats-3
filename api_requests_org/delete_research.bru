@@ -1,0 +1,41 @@
+meta {
+  name: delete_research
+  type: http
+  seq: 8
+}
+
+delete {
+  url: http://127.0.0.1:5000/api/researches/:research_id
+  body: none
+  auth: none
+}
+
+params:path {
+  research_id: 1
+}
+
+tests {
+  test("should return status 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+  
+  test("should return JSON object with correct keys", function() {
+    const body = res.getBody();
+  
+    expect(body).to.be.an('object');
+    expect(body).to.have.all.keys('message', 'success');
+  });
+  
+  test("should have success set to true", function() {
+    const body = res.getBody();
+  
+    expect(body.success).to.be.true;
+  });
+  
+  test("should have message 'Onderzoek verwijderd'", function() {
+    const body = res.getBody();
+  
+    expect(body.message).to.equal("Onderzoek verwijderd");
+  });
+  
+}

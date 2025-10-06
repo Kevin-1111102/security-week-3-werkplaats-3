@@ -1,0 +1,7 @@
+Flask==3.0.3
+bcrypt
+flask-jwt-extended
+flasgger
+Faker
+mailersend
+python-dotenv

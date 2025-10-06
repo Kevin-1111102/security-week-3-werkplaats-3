@@ -1,0 +1,168 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body, html {
+    width: 100%;
+    height: 100%;
+    overflow-x: hidden;
+    font-family: Arial, sans-serif;
+}
+
+.bi {
+    display: inline-block;
+    width: 1rem;
+    height: 1rem;
+    vertical-align: -.125em;
+    fill: currentColor;
+}
+
+.sidebar {
+    background-color: #002D62;
+    width: 200px;
+    height: 100vh;
+    position: fixed;
+    left: 0;
+    top: 0;
+    padding: 15px;
+    overflow-y: auto;
+    z-index: 1000;
+}
+
+.sidebar a {
+    text-decoration: none;
+    display: block;
+    padding: 12px;
+    font-size: 16px;
+    border-radius: 5px;
+    transition: background 0.3s ease;
+    color: white;
+}
+
+.sidebar a.active {
+    background-color: #2470dc;
+    font-weight: bold;
+    border-left: 5px solid #FFC107;
+}
+
+.sidebar a:hover {
+    background-color: #0046A3;
+}
+
+.menu-toggle {
+    display: none;
+}
+
+@media screen and (max-width: 768px) {
+    .menu-toggle {
+        display: block;
+        background-color: #FFC107;
+        border: none;
+        padding: 10px 15px;
+        font-size: 20px;
+        cursor: pointer;
+        position: fixed;
+        top: 10px;
+        left: 10px;
+        z-index: 1100;
+    }
+
+    .sidebar {
+        transform: translateX(-200px);
+        transition: transform 0.3s ease-in-out;
+    }
+
+    .sidebar.open {
+        transform: translateX(0);
+    }
+}
+
+.content {
+    flex-grow: 1;
+    margin-left: 220px;
+    padding: 20px;
+    overflow-x: auto;
+    min-height: 100vh;
+    max-width: calc(100% - 200px);
+    transition: margin-left 0.3s ease-in-out, max-width 0.3s ease-in-out;
+}
+
+@media (max-width: 768px) {
+    .content {
+        margin-left: 0;
+        width: 100%;
+    }
+}
+
+.navbar h1 {
+    margin-left: 10px;
+    white-space: nowrap;
+}
+
+.table-container {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    margin-top: 20px;
+}
+
+table {
+    width: 100%;
+    min-width: 600px;
+    border-collapse: collapse;
+    background-color: white;
+    max-width: 100%;
+}
+
+th, td {
+    padding: 12px;
+    text-align: left;
+    border: 1px solid #ddd;
+    white-space: nowrap;
+}
+
+th {
+    background-color: #002D62;
+    color: white;
+}
+
+button {
+    background-color: #002D62;
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+    margin: 5px;
+    border-radius: 5px;
+}
+
+button:hover {
+    background-color: #0046A3;
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+    }
+
+    .content {
+        margin-left: 0;
+        width: 100%;
+    }
+
+    th, td {
+        font-size: 14px;
+        padding: 8px;
+    }
+}
+
+.menu-item:hover, .menu-item.active {
+    background-color: #2470dc;
+}
+
+.menu-item {
+    color: white;
+}

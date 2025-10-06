@@ -1,0 +1,188 @@
+{% extends "base.html" %}
+{% block additional_css %}
+  <link rel="stylesheet" href="/static/styles/user/profile.css">
+  <link rel="stylesheet" href="/static/styles/components/vertical_tabs.css">
+{% endblock %}
+{% block title %}Profiel{% endblock %}
+{% block body %}
+  {% include "components/navbar.html" %}
+  <section aria-label="Profiel bewerken" class="profile-container container table-section my-4" data-user-id="{{ user_id }}" data-delay="60000">
+    <form id="profile-form" class="needs-validation">
+      <div class="block d-flex flex-column gap-4">
+        <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
+          <h2 class="fs-3 fw-bold mb-0">Profiel bewerken</h2>
+          <div>
+            <a href="{{ url_for('user.profile') }}" class="btn btn-sm btn-outline fw-bold" aria-label="Wijzig uw profiel gegevens">
+              <i class="fa-solid fa-xmark"></i> Annuleren
+            </a>
+            <button class="btn btn-sm btn-primary fw-bold" aria-label="Wijzig uw profiel gegevens">
+              <i class="fa-solid fa-floppy-disk"></i> Opslaan
+            </button>
+          </div>
+        </div>
+        <div class="tabs-wrapper d-flex flex-wrap gap-4">
+          <aside class="d-flex flex-column flex-grow-1 flex-sm-grow-0 gap-2 me-md-5 mb-4" role="tablist" aria-orientation="vertical">
+            <div id="tab-1" class="tab active" role="tab" aria-selected="true" aria-controls="personal-info" tabindex="0">Persoonlijke Gegevens</div>
+            <div id="tab-2" class="tab" role="tab" aria-selected="false" aria-controls="contact-info" tabindex="0">Contact Gegevens</div>
+            <div id="tab-3" class="tab" role="tab" aria-selected="false" aria-controls="preferences" tabindex="0">Voorkeuren</div>
+            <div id="tab-4" class="tab" role="tab" aria-selected="false" aria-controls="guardian-info" tabindex="0">Voogd Gegevens</div>
+          </aside>
+          <main class="details d-flex flex-grow-1 p-4" aria-live="assertive">
+            <fieldset id="personal-info" class="tab-content active" role="tabpanel" aria-labelledby="tab-1" aria-live="polite">
+              <div class="d-flex flex-column gap-3 w-100">
+                <legend class="visually-hidden">Persoonlijke Gegevens</legend>
+                <div class="d-flex flex-wrap gap-2">
+                  <div class="flex-grow-1 col-sm-2">
+                    <label for="first-name" class="form-label">Voornaam <span class="label-star-required">*</span></label>
+                    <input id="first-name" type="text" name="voornaam" class="form-control" required aria-required="true">
+                  </div>
+                  <div class="flex-grow-1 col-sm-1">
+                    <label for="middle-name" class="form-label">Tussenvoegsel</label>
+                    <input id="middle-name" type="text" name="tussenvoegsel" class="form-control">
+                  </div>
+                  <div class="flex-grow-1 col-sm-2">
+                    <label for="last-name" class="form-label">Achternaam <span class="label-star-required">*</span></label>
+                    <input id="last-name" type="text" name="achternaam" class="form-control" required aria-required="true">
+                  </div>
+                </div>
+                <div class="d-none" aria-hidden="true">
+                  <label for="birthdate" class="form-label">Geboortedatum <span class="label-star-required">*</span></label>
+                  <input id="birthdate" type="date" name="geboortedatum" class="form-control" required>
+                </div>
+                <fieldset id="gender" class="d-none" aria-hidden="true">
+                  <legend class="form-label">Geslacht <span class="label-star-required">*</span></legend>
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="geslacht" id="male" value="Man" required>
+                    <label class="form-check-label" for="male">Man</label>
+                  </div>
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="geslacht" id="female" value="Vrouw" required>
+                    <label class="form-check-label" for="female">Vrouw</label>
+                  </div>
+                </fieldset>
+                <div>
+                  <label for="disabilities" class="form-label">Beperkingen <span class="label-star-required" aria-hidden="true">*</span></label>
+                  <select id="disabilities" name="beperkingen" class="form-control" multiple size="5" required aria-required="true" aria-multiselectable="true">
+                    {% for beperking in beperkingen %}
+                      <option value="{{ beperking.beperking_id }}">{{ beperking.beperking_naam }}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+                <div>
+                  <label for="disability-details" class="form-label">Bijzonderheden Beperkingen</label>
+                  <textarea id="disability-details" name="bijzonderheden" class="form-control" rows="2"></textarea>
+                </div>
+                <div>
+                  <label for="tools" class="form-label">Gebruikte hulpmiddelen</label>
+                  <input id="tools" type="text" name="hulpmiddelen" class="form-control">
+                </div>
+                <div>
+                  <label for="introduction" class="form-label">Kort voorstellen</label>
+                  <textarea id="introduction" name="introductie" class="form-control" rows="2"></textarea>
+                </div>
+              </div>
+            </fieldset>
+            
+            <fieldset id="contact-info" class="tab-content" role="tabpanel" aria-labelledby="tab-2">
+              <legend class="visually-hidden">Contact gegevens</legend>
+              <div class="d-flex flex-column gap-3 w-100">
+                <div>
+                  <label for="postalcode" class="form-label">Postcode <span class="label-star-required">*</span></label>
+                  <input id="postalcode" type="text" class="form-control" name="postcode" required="" aria-required="true">
+                </div>
+                <div>
+                  <label for="tel" class="form-label">Telefoonnummer <span class="label-star-required">*</span></label>
+                  <input id="tel" type="tel" name="telefoonnummer" class="form-control" required="" aria-required="true">
+                </div>
+                <div>
+                  <label for="email" class="form-label">E-mail <span class="label-star-required">*</span></label>
+                  <input id="email" type="email" name="email" class="form-control" required="" aria-required="true">
+                </div>
+              </div>
+            </fieldset>
+
+            <fieldset id="preferences" class="tab-content" role="tabpanel" aria-labelledby="tab-3">
+              <legend class="visually-hidden">Voorkeuren</legend>
+              <div class="d-flex flex-column gap-3 w-100">
+                <fieldset id="contact_preference" aria-required="true">
+                  <legend class="form-label">Voorkeur benadering <span class="label-star-required">*</span></legend>
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="contact_voorkeur" id="contact_preference_tel" value="Telefonisch" required="">
+                    <label class="form-check-label" for="contact_preference_tel">Telefonisch</label>
+                  </div>
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="contact_voorkeur" id="contact_preference_email" value="E-mail" required="">
+                    <label class="form-check-label" for="contact_preference_email">E-mail</label>
+                  </div>
+                </fieldset>
+                <fieldset id="research_preference" aria-required="true">
+                  <legend class="form-label">
+                    Voorkeur onderzoekstype(s) <span class="label-star-required" aria-hidden="true">*</span>
+                  </legend>
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="onderzoektype_voorkeur" id="research_preference_telefonisch" value="Telefonisch">
+                    <label class="form-check-label" for="research_preference_telefonisch">Telefonisch</label>
+                  </div>
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="onderzoektype_voorkeur" id="research_preference_online" value="Online">
+                    <label class="form-check-label" for="research_preference_online">Online</label>
+                  </div>
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="onderzoektype_voorkeur" id="research_preference_fysiek" value="Fysiek">
+                    <label class="form-check-label" for="research_preference_fysiek">Fysiek</label>
+                  </div>
+                </fieldset>
+                <div>
+                  <label for="availability" class="form-label">Bijzonderheden beschikbaarheid</label>
+                  <textarea id="availability" name="bijzonderheden_beschikbaarheid" class="form-control" rows="3"></textarea>
+                </div>
+              </div>
+            </fieldset>
+            
+            <fieldset id="guardian-info" class="tab-content" role="tabpanel" aria-labelledby="tab-4">
+              <legend class="visually-hidden">Voogd gegevens</legend>
+              <div class="d-flex flex-column gap-3 w-100">
+                <div class="form-check form-switch">
+                  <input class="form-check-input" type="checkbox" id="has_guardian" name="heeft_voogd">
+                  <label class="form-check-label" for="has_guardian">Gebruiker heeft voogd</label>
+                </div>
+
+                <fieldset id="guardian" class="guardian-section" style="display: block;">
+                  <legend class="form-label">
+                    <b>Gegevens voogd</b>
+                  </legend>
+                
+                  <div>
+                    <label for="guardian_name" class="form-label">
+                      Naam <span class="label-star-required" aria-hidden="true">*</span>
+                    </label>
+                    <input id="guardian_name" type="text" name="naam_voogd" class="form-control" aria-required="true" required="">
+                  </div>
+                
+                  <div>
+                    <label for="guardian_email" class="form-label">
+                      E-mail <span class="label-star-required" aria-hidden="true">*</span>
+                    </label>
+                    <input id="guardian_email" type="email" name="email_voogd" class="form-control" aria-required="true" required="">
+                  </div>
+                
+                  <div>
+                    <label for="guardian_tel" class="form-label">
+                      Telefoonnummer <span class="label-star-required" aria-hidden="true">*</span>
+                    </label>
+                    <input id="guardian_tel" type="tel" name="telefoonnummer_voogd" class="form-control" aria-required="true" required="">
+                  </div>
+                </fieldset>
+              </div>
+            </fieldset>
+          </main>
+        </div>
+      </div>
+      <a href="/gebruiker" class="btn btn-sm btn-primary fw-bold">
+        <i class="fa-solid fa-arrow-left"></i> Terug naar Dashboard
+      </a>
+    </form>
+  </section>
+  <script src="/static/js/components/vertical_tabs.js"></script>
+  <script type="module" src="/static/js/user/update_profile.js"></script>
+{% endblock %}

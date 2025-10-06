@@ -1,0 +1,104 @@
+{% from "components/table.html" import table %}
+{% extends "base.html" %}
+
+{% block additional_css %}
+<link rel="stylesheet" href="/static/styles/user/dashboard.css">
+<link rel="stylesheet" href="/static/styles/components/table.css">
+{% endblock %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block body %}
+<main>
+    {% include "components/navbar.html" %}
+
+    {{ table(
+      titles=[
+        "Gebruikers",
+        "Organisaties",
+        "Onderzoeken",
+        "Aanmeldingen"
+      ],
+      active_title="Gebruikers",
+      id={
+        "Gebruikers": "gebruikers",
+        "Organisaties": "organisaties",
+        "Onderzoeken": "onderzoeken",
+        "Aanmeldingen": "aanmeldingen"
+      },
+      placeholder={
+        "Gebruikers": "gebruikers",
+        "Organisaties": "organisaties",
+        "Onderzoeken": "onderzoeken",
+        "Aanmeldingen": "aanmeldingen"
+      },
+      endpoint={
+        "Gebruikers": "users",
+        "Organisaties": "organizations",
+        "Onderzoeken": "researches",
+        "Aanmeldingen": "subscriptions"
+      },
+      params={
+        "Gebruikers": "&verberg_nieuw=false",
+        "Organisaties": "&verberg_nieuw=false",
+        "Onderzoeken": "&verberg_nieuw=false",
+        "Aanmeldingen": "&verberg_nieuw=false"
+      },
+      delay=30000,
+      has_search=True,
+      has_filters=True,
+      has_pagination=True,
+      headers={
+        "Gebruikers": [
+          {'key': 'voornaam', 'label': 'Voornaam', 'sortable': True},
+          {'key': 'achternaam', 'label': 'Achternaam', 'sortable': True},
+          {'key': 'email', 'label': 'E-mail', 'sortable': True},
+          {'key': 'status', 'label': 'Status', 'sortable': True}
+        ],
+        "Organisaties": [
+          {'key': 'organisatie_naam', 'label': 'Naam', 'sortable': True},
+          {'key': 'contactpersoon', 'label': 'Contactpersoon', 'sortable': True},
+          {'key': 'email', 'label': 'E-mail', 'sortable': True},
+          {'key': 'status', 'label': 'Status', 'sortable': True}
+        ],
+        "Onderzoeken": [
+          {'key': 'titel', 'label': 'Titel', 'sortable': True},
+          {'key': 'onderzoek_type', 'label': 'Type', 'sortable': True},
+          {'key': 'status', 'label': 'Status', 'sortable': True}
+        ],
+        "Aanmeldingen": [
+          {'key': 'onderzoek', 'label': 'Onderzoek', 'sortable': False},
+          {'key': 'onderzoeksbeperkingcategorie', 'label': 'Categorie', 'sortable': False},
+          {'key': 'ervaringsdeskundige', 'label': 'Ervaringsdeskundige', 'sortable': False},
+          {'key': 'e_beperking', 'label': 'Beperking', 'sortable': False},
+          {'key': 'status', 'label': 'Status', 'sortable': False}
+        ]
+      },
+      actions={
+        "Gebruikers": [
+          {'key': 'gebruiker_id', 'label': 'Details', 'icon': 'fa-solid fa-circle-info', 'class': 'btn-light text-nowrap', 'role': 'button'},
+          {'key': 'gebruiker_id', 'label': 'Goedkeuren', 'icon': 'fa-solid fa-check', 'class': 'btn-success action-btn', 'role': 'button'},
+          {'key': 'gebruiker_id', 'label': 'Afkeuren', 'icon': 'fa-solid fa-times', 'class': 'btn-danger action-btn', 'role': 'button'}
+        ],
+        "Organisaties": [
+          {'key': 'organisatie_id', 'label': 'Details', 'icon': 'fa-solid fa-circle-info', 'class': 'btn-light text-nowrap', 'role': 'button'},
+          {'key': 'organisatie_id', 'label': 'Goedkeuren', 'icon': 'fa-solid fa-check', 'class': 'btn-success action-btn', 'role': 'button'},
+          {'key': 'organisatie_id', 'label': 'Afkeuren', 'icon': 'fa-solid fa-times', 'class': 'btn-danger action-btn', 'role': 'button'}
+        ],
+        "Onderzoeken": [
+          {'key': 'onderzoek_id', 'label': 'Details', 'icon': 'fa-solid fa-circle-info', 'class': 'btn-light text-nowrap', 'role': 'button'},
+          {'key': 'onderzoek_id', 'label': 'Goedkeuren', 'icon': 'fa-solid fa-check', 'class': 'btn-success action-btn', 'role': 'button'},
+          {'key': 'onderzoek_id', 'label': 'Afkeuren', 'icon': 'fa-solid fa-times', 'class': 'btn-danger action-btn', 'role': 'button'}
+        ],
+        "Aanmeldingen": [
+          {'key': 'aanmelding', 'label': 'Details', 'icon': 'fa-solid fa-circle-info', 'class': 'btn-light text-nowrap', 'role': 'button'},
+          {'key': 'aanmelding', 'label': 'Goedkeuren', 'icon': 'fa-solid fa-check', 'class': 'btn-success action-btn', 'role': 'button'},
+          {'key': 'aanmelding', 'label': 'Afkeuren', 'icon': 'fa-solid fa-times', 'class': 'btn-danger action-btn', 'role': 'button'}
+        ]
+      }
+    ) }}
+</main>
+
+<script src="/static/js/components/table.js"></script>
+<script type="module" src="/static/js/admin/dashboard.js"></script>
+{% endblock %}

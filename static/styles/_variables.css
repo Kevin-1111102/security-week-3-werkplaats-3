@@ -1,0 +1,44 @@
+:root {
+  --border-width: 0.1rem;
+  --border-radius: 3rem;
+  --border-radius-card: .3rem;
+
+  --bs-box-shadow-sm: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+  --bs-box-shadow-md: 0 0.5rem 1rem rgba(0, 0, 0, 0.081);
+  --bs-box-shadow-lg: 0 1rem 3rem rgba(0, 0, 0, 0.175);
+
+  --dropdown-min-width: 18rem;
+}
+
+:root body[data-bs-theme="light"] {
+  --primary: #1fc396;
+  --secondary: #080b24;
+  --tertiary: #2b50ec;
+  
+  --text-primary: var(--secondary);
+  --text-contrast: #fff;
+  --text-muted: #67696c;
+
+  --focus-box-shadow: 0 0 0 .25rem color-mix(in srgb, var(--primary) 35%, transparent);
+  --focus-border-color: var(--primary);
+  
+  --background: #f1f5fb;
+  --foreground: #fff;
+ }
+
+
+:root body[data-bs-theme="dark"] {
+  --primary: #238636;
+  --secondary: #6080ff;
+  --tertiary: #6080ff;
+
+  --text-primary: #fff;
+  --text-contrast: #fff;
+  --text-muted: #67696c;
+
+  --focus-box-shadow: 0 0 0 .25rem color-mix(in srgb, var(--primary) 35%, transparent);
+  --focus-border-color: var(--primary);
+
+  --background: #0d1117;
+  --foreground: #151b23;
+}

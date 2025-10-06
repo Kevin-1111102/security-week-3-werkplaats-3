@@ -1,0 +1,56 @@
+<div class="position-fixed bottom-0 end-0 p-3">
+    <button class="btn btn-primary btn-round shadow-lg fs-4" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false" aria-haspopup="true" aria-controls="accessibility-options" aria-label="Toegankelijkheidsopties" title="Toegankelijkheidsopties">
+      <i class="fa-solid fa-universal-access"></i>
+    </button>
+  
+    <div id="accessibility-menu" class="dropdown-menu dropdown-menu-sm-end dropdown-menu-xl-start shadow-lg block mb-2 w-100">
+      <form id="accessibility-form" class="py-3 d-flex flex-column gap-4">
+        <h2 class="fs-6 mb-0 fw-bold">Toegankelijkheidsopties</h2>
+
+        <div>
+          <label for="theme-select" class="form-label">Selecteer thema</label>
+          <select id="theme-select" class="form-select" name="color_theme" aria-label="kies een kleurenthema voor de website">
+            <option value="light">Licht</option>
+            <option value="dark">Donker</option>
+            <option value="custom">Zelf instellen</option>
+          </select>
+        </div>
+        
+        <fieldset id="custom-colors" class="d-flex d-none flex-column gap-2">
+          <legend class="visually-hidden">Website kleuren instellen</legend>
+          <div class="row g-2">
+            <div class="col-4">
+              <label for="primary-color" class="form-label">Primair</label>
+              <input type="color" class="form-control form-control-color w-100" id="primary-color" name="primary" aria-label="kies een hoofdkleur voor de website" title="kies een hoofdkleur voor de website" value="#fa991c">
+            </div>
+            <div class="col-4">
+              <label for="secondary-color" class="form-label">Secundair</label>
+              <input type="color" class="form-control form-control-color w-100" id="secondary-color" name="secondary" aria-label="kies een secundaire kleur voor de website" title="kies een secundaire kleur voor de website" value="#261702">
+            </div>
+            <div class="col-4">
+              <label for="tertiary-color" class="form-label">Tertiair</label>
+              <input type="color" class="form-control form-control-color w-100" id="tertiary-color" name="tertiary" aria-label="kies een tertiaire kleur voor de website" title="kies een tertiaire kleur voor de website" value="#C15000">
+            </div>
+            <div class="col-6">
+              <label for="text-primary-color" class="form-label">Tekst primair</label>
+              <input type="color" class="form-control form-control-color w-100 p-1" id="text-primary-color" name="text-primary" aria-label="kies een contrast tekstkleur voor de website" title="kies een contrast tekstkleur tekstkleur voor de website" value="#25170A">
+            </div>
+            <div class="col-6">
+              <label for="text-contrast-color" class="form-label">Tekst contrast</label>
+              <input type="color" class="form-control form-control-color w-100 p-1" id="text-contrast-color" name="text-contrast" aria-label="kies een tekstkleur voor de website" title="kies een tekstkleur voor de website" value="#ffffff">
+            </div>
+            <div class="col-6">
+              <label for="background-color" class="form-label">Achtergrond</label>
+              <input type="color" class="form-control form-control-color w-100 p-1" id="background-color" name="background" aria-label="kies een achtergrondkleur voor de website" title="kies een achtergrondkleur voor de website" value="#F5E8D6">
+            </div>
+            <div class="col-6">
+              <label for="foreground-color" class="form-label">Voorgrond</label>
+              <input type="color" class="form-control form-control-color w-100 p-1" id="foreground-color" name="foreground" aria-label="kies een voorgrondkleur voor de website" title="kies een voorgrondkleur voor de website" value="#ffffff">
+            </div>
+          </div>
+        </fieldset>
+  
+        <button id="apply-colors" type="submit" class="btn btn-sm btn-primary fw-bold w-100" aria-label="toepassen van toegankelijkheidsopties"><i class="fa-solid fa-floppy-disk" aria-hidden="true"></i> Toepassen</button>
+      </form>
+    </div>
+</div>

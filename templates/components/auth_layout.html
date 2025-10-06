@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block body %}
+<main class="w-100 m-auto">
+  <div class="container-fluid min-vh-100 d-lg-flex">
+    <div class="col-lg-6 d-flex flex-column gap-4 p-4">
+      <header class="d-flex justify-content-center justify-content-lg-start position-relative">
+        <a href="/">
+          <img src="/static/images/logo.svg" alt="Logo van stichting accessibility onderdeel van Bartiméus" width="256px" height="64px" class="navbar--logo d-none d-lg-inline-block align-text-top mw-100">
+          <img src="/static/images/logo_inverted.svg" alt="Logo van stichting accessibility onderdeel van Bartiméus" width="256px" height="64px" class="navbar--logo-inverted d-none d-lg-inline-block align-text-top mw-100">
+          <img src="/static/images/favicon.png" alt="Logo Accessibility" class="d-lg-none logo-sm" />
+        </a>
+      </header>
+      <div class="d-flex flex-grow-1 align-items-center justify-content-center">
+        {% block form %}
+
+        {% endblock %}
+      </div>
+    </div>
+    <div class="col-lg-6 d-none d-lg-block position-relative bg-light">
+      <img
+          src="/static/images/pexels-photo-8542190.jpeg"
+          alt="Een man en een vrouw zitten in rolstoelen, hand in hand."
+          class="position-fixed top-0 end-0 w-50 vh-100 object-fit-cover">
+    </div>
+  </div>
+</main>
+{% endblock %}
